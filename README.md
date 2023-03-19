@@ -1,5 +1,7 @@
 # 4300-Flask-Template
 
+App Link: http://4300showcase.infosci.cornell.edu:4521/
+
 ## Contents
 
 - [Summary](#summary)
