@@ -3,6 +3,7 @@ import os
 from flask import Flask, render_template, request
 from flask_cors import CORS
 from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
+import ir.recommendation as recommendation
 
 # ROOT_PATH for linking with all your files. 
 # Feel free to use a config.py or settings.py with a global export variable
@@ -22,24 +23,34 @@ mysql_engine = MySQLDatabaseHandler(MYSQL_USER,MYSQL_USER_PASSWORD,MYSQL_PORT,MY
 mysql_engine.load_file_into_db()
 
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
+
+# Response Formats
+def success_response(data, code=200):
+    return json.dumps(data), code
+
+
+def failure_response(message, code=404):
+    return json.dumps({"error": message}), code
 
 # Sample search, the LIKE operator in this case is hard-coded, 
 # but if you decide to use SQLAlchemy ORM framework, 
 # there's a much better and cleaner way to do this
-def sql_search(episode):
-    query_sql = f"""SELECT * FROM episodes WHERE LOWER( title ) LIKE '%%{episode.lower()}%%' limit 10"""
-    keys = ["id","title","descr"]
-    data = mysql_engine.query_selector(query_sql)
-    return json.dumps([dict(zip(keys,i)) for i in data])
+# def sql_search(episode):
+#     query_sql = f"""SELECT * FROM episodes WHERE LOWER( title ) LIKE '%%{episode.lower()}%%' limit 10"""
+#     keys = ["id","title","descr"]
+#     data = mysql_engine.query_selector(query_sql)
+#     return json.dumps([dict(zip(keys,i)) for i in data])
 
 @app.route("/")
 def home():
     return render_template('base.html',title="sample html")
 
-@app.route("/episodes")
-def episodes_search():
-    text = request.args.get("title")
-    return sql_search(text)
+@app.route("/recommendations")
+def recommend_podcasts():
+    body = json.loads(request.body)
+    similar_genres = recommendation.get_similar_genres(body["user1"], body["user2"])
+    podcasts = {"podcasts": []}
+    return success_response(podcasts)
 
-# app.run(debug=True)
+app.run(debug=True)
