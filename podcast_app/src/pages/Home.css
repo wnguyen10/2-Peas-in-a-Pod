@@ -1,0 +1,15 @@
+.Home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.Title {
+  margin-top: 100px;
+}
+
+.Users {
+  display: flex;
+  flex-direction: row;
+}
