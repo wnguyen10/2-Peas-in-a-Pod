@@ -20,11 +20,10 @@ for show_name in shows:
     else:
         publisher_to_show_name[publisher] = [show_name]
 
-def get_publisher_tfidf(doc_by_vocab, publisher_name):
+def get_publisher_tfidf(publisher_name):
     """
     Params:
     {
-        doc_by_vocab: term-document matrix with TF-IDF weights
         publisher_name (string): name of podcast publisher
     }
 
@@ -42,11 +41,10 @@ def get_publisher_tfidf(doc_by_vocab, publisher_name):
         
     return publisher_tfidf / len(publisher_shows)
 
-def get_individual_tfidf(doc_by_vocab, individual_prefs):
+def get_individual_tfidf(individual_prefs):
     """
     Params:
     {
-        doc_by_vocab: term-document matrix with TF-IDF weights
         individual_prefs: list of an individual's preferred podcast publishers
     }
 
@@ -56,16 +54,15 @@ def get_individual_tfidf(doc_by_vocab, individual_prefs):
     individual_tfidf = np.zeros(doc_by_vocab.shape[1])
     
     for publisher in individual_prefs:
-        publisher_tfidf = get_publisher_tfidf(doc_by_vocab, publisher)
+        publisher_tfidf = get_publisher_tfidf(publisher)
         individual_tfidf += publisher_tfidf
         
     return individual_tfidf / len(individual_prefs)
 
-def get_pair_tfidf(doc_by_vocab, pref_one, pref_two):
+def get_pair_tfidf(pref_one, pref_two):
     """
     Params:
     {
-        doc_by_vocab: term-document matrix with TF-IDF weights
         pref_one: list of individual one's preferred podcast publishers
         pref_two: list of individual two's preferred podcast publishers
     }
@@ -73,16 +70,15 @@ def get_pair_tfidf(doc_by_vocab, pref_one, pref_two):
     Returns: a tf-idf vector representing the preferences for a pair of individuals
     """
     
-    individual_one_tfidf = get_individual_tfidf(doc_by_vocab, pref_one)
-    individual_two_tfidf = get_individual_tfidf(doc_by_vocab, pref_two)
+    individual_one_tfidf = get_individual_tfidf(pref_one)
+    individual_two_tfidf = get_individual_tfidf(pref_two)
     
     return (individual_one_tfidf + individual_two_tfidf) / 2
 
-def get_top_k_recommendations(doc_by_vocab, pref_one, pref_two, k = 10):
+def get_top_k_recommendations(pref_one, pref_two, k = 10):
     """ 
     Params: 
     {
-        doc_by_vocab: term-document matrix with TF-IDF weights
         pref_one: list of individual one's preferred podcast publishers
         pref_two: list of individual two's preferred podcast publishers
         k: number of recommendations returned (default = 10)
@@ -90,7 +86,7 @@ def get_top_k_recommendations(doc_by_vocab, pref_one, pref_two, k = 10):
 
     Returns: a list of k sorted tuples in format (podcast name, cosine similarity) 
     """
-    pair_tfidf = get_pair_tfidf(doc_by_vocab, pref_one, pref_two)
+    pair_tfidf = get_pair_tfidf(pref_one, pref_two)
     pair_tfidf = pair_tfidf.reshape((1, doc_by_vocab.shape[1]))
     similarities = cosine_similarity(pair_tfidf, doc_by_vocab)[0]
     sorted_idx = np.argsort(similarities)[::-1]
