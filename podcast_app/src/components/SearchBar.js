@@ -4,14 +4,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import { useForkRef } from "@mui/material";
 
-function SearchBar({ placeholder, data }) {
+function SearchBar({ placeholder, data, addGenre }) {
 
   const [filteredData, setFilteredData] = useState([]);
   const [wordEntered, setWordEntered] = useState("");
-
-  // useEffect(() => {
-  //   setFilteredData(data)
-  // }, [])
 
 
   const handleFilter = (event) => {
@@ -50,9 +46,9 @@ function SearchBar({ placeholder, data }) {
         <div className="dataResult">
           {filteredData.slice(0, 15).map((value, key) => {
             return (
-              <a className="dataItem" href={value.link} target="_blank">
+              <button className="dataItem" onClick={() => { clearInput(); addGenre(value.title) }}>
                 <p>{value.title} </p>
-              </a>
+              </button>
             );
           })}
         </div>

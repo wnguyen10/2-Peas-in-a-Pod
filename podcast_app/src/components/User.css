@@ -12,3 +12,28 @@ body {
   padding: 0;
   margin: 0;
 }
+
+.tag {
+  background-color: rgb(156, 255, 150);
+  border-radius: 5px;
+  display: flex;
+  margin: 5px;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  min-width: 100px;
+}
+
+.tags {
+  display: flex;
+  align-items: start;
+
+}
+
+.close-button {
+  cursor: pointer;
+  background-color: rgb(156, 255, 150);
+  margin-left: auto;
+  width: 25px;
+
+}
