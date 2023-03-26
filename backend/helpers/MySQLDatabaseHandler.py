@@ -13,7 +13,6 @@ class MySQLDatabaseHandler(object):
         self.engine = self.validate_connection()
 
     def validate_connection(self):
-
         engine = db.create_engine(f"mysql+pymysql://{self.MYSQL_USER}:{self.MYSQL_USER_PASSWORD}@{self.MYSQL_HOST}:{self.MYSQL_PORT}")
         conn = engine.connect()
         conn.execute(f"CREATE DATABASE IF NOT EXISTS {self.MYSQL_DATABASE}")
