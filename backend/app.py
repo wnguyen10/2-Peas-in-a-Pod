@@ -2,29 +2,19 @@ import json
 import os
 from flask import Flask, render_template, request
 from flask_cors import CORS
-from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
-import ir.recommendation as recommendation
-
+from config import Base, Session, mysql_engine
+from db import Category, Podcast, category_assoc
+ 
 # ROOT_PATH for linking with all your files.
 # Feel free to use a config.py or settings.py with a global export variable
 os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..", os.curdir))
-
-# These are the DB credentials for your OWN MySQL
-# Don't worry about the deployment credentials, those are fixed
-# You can use a different DB name if you want to
-MYSQL_USER = "root"
-MYSQL_USER_PASSWORD = "thailand"
-MYSQL_PORT = 3306
-MYSQL_DATABASE = "podcasts"
-
-mysql_engine = MySQLDatabaseHandler(
-    MYSQL_USER, MYSQL_USER_PASSWORD, MYSQL_PORT, MYSQL_DATABASE)
 
 # Path to init.sql file. This file can be replaced with your own file for testing on localhost, but do NOT move the init.sql file
 mysql_engine.load_file_into_db()
 
 app = Flask(__name__)
-# CORS(app)
+
+CORS(app)
 
 # Response Formats
 def success_response(data, code=200):
@@ -34,25 +24,40 @@ def success_response(data, code=200):
 def failure_response(message, code=404):
     return json.dumps({"error": message}), code
 
-# Sample search, the LIKE operator in this case is hard-coded,
-# but if you decide to use SQLAlchemy ORM framework,
-# there's a much better and cleaner way to do this
-# def sql_search(episode):
-#     query_sql = f"""SELECT * FROM episodes WHERE LOWER( title ) LIKE '%%{episode.lower()}%%' limit 10"""
-#     keys = ["id","title","descr"]
-#     data = mysql_engine.query_selector(query_sql)
-#     return json.dumps([dict(zip(keys,i)) for i in data])
-
 @app.route("/")
 def home():
     return render_template('base.html', title="sample html")
 
+@app.route("/api/podcasts/", methods=["POST"])
+def create_podcast():
+    body = json.loads(request.data)
+    
+    name = body.get("name")
+    publisher = body.get("publisher")
+    description = body.get("description")
+    duration = body.get("duration")
+    timestamp = body.get("timestamp")
 
-@app.route("/recommendations")
+    podcast = Podcast(name=name,publisher=publisher,description=description, duration=duration, timestamp=timestamp)
+    Session.add(podcast)
+    Session.commit()
+    return success_response(podcast.serialize(), 201)
+
+@app.route("/api/podcasts/<int:id>/", methods=["DELETE"])
+def delete_podcast(id):
+    podcast = Session.query(Podcast).filter_by(id=id).first()
+    if podcast is not None:
+        Session.delete(podcast)
+        Session.commit()
+        return success_response(podcast.serialize())
+    return failure_response("Invalid Podcast ID")
+
+@app.route("/api/recommendations/")
 def recommend_podcasts():
-    body = json.loads(request.body)
-    similar_genres = recommendation.get_similar_genres(body["user1"], body["user2"])
-    podcasts = {"podcasts": []}
-    return success_response(podcasts)
+    body = json.loads(request.data)
+    podcasts = [p.serialize() for p in Session.query(Podcast).all()]
+
+    res = {"podcasts": podcasts}
+    return success_response(res)
 
 app.run(debug=True)

@@ -13,7 +13,6 @@ class MySQLDatabaseHandler(object):
         self.engine = self.validate_connection()
 
     def validate_connection(self):
-
         engine = db.create_engine(f"mysql+pymysql://{self.MYSQL_USER}:{self.MYSQL_USER_PASSWORD}@{self.MYSQL_HOST}:{self.MYSQL_PORT}")
         conn = engine.connect()
         conn.execute(f"CREATE DATABASE IF NOT EXISTS {self.MYSQL_DATABASE}")
@@ -23,19 +22,19 @@ class MySQLDatabaseHandler(object):
     def lease_connection(self):
         return self.engine.connect()
     
-    # def query_executor(self,query):
-    #     conn = self.lease_connection()
-    #     if type(query) == list:
-    #         for i in query:
-    #             conn.execute(i)
-    #     else:
-    #         conn.execute(query)
+    def query_executor(self,query):
+        conn = self.lease_connection()
+        if type(query) == list:
+            for i in query:
+                conn.execute(i)
+        else:
+            conn.execute(query)
         
 
-    # def query_selector(self,query):
-    #     conn = self.lease_connection()
-    #     data = conn.execute(query)
-    #     return data
+    def query_selector(self,query):
+        conn = self.lease_connection()
+        data = conn.execute(query)
+        return data
 
     def load_file_into_db(self,file_path  = None):
         if self.IS_DOCKER:
@@ -47,70 +46,3 @@ class MySQLDatabaseHandler(object):
         self.query_executor(sql_file_data)
         sql_file.close()
 
-
-category_assoc = db.Table(
-    "category_assoc",
-    db.Model.metadata,
-    db.Column("category_id", db.Integer, db.ForeignKey("category.id")),
-    db.Column("podcast_id", db.Integer, db.ForeignKey("podcast.id")),
-)
-
-
-class Podcast(db.Model):
-    __tablename__ = "podcasts"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    description = db.Column(db.String, nullable=False)
-    spotify_uri = db.Column(db.String, nullable=False)
-    image_url = db.Column(db.String, nullable=False)
-    spotify_url = db.Column(db.String, nullable=False)
-    duration = db.Column(db.Number, nullable=False)
-    categories = db.relationship("Category", secondary="category_assoc", back_populates="podcasts")
-
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name")
-        self.description = kwargs.get("description")
-        self.spotify_uri = kwargs.get("spotify_uri")
-        self.image_url = kwargs.get("image_url")
-        self.spotify_url = kwargs.get("spotify_url")
-        self.duration = kwargs.get("duration")
-
-    def serialize(self):
-        categories = []
-        for c in self.categories:
-            categories.append(c.simple_serialize())
-
-        return {
-            "id": self.id,
-            "name": self.name,
-            "description": self.description,
-            "duration": self.duration,
-            "categories": categories,
-        }
-
-    def simple_serialize(self):
-        return {
-            "id": self.id, 
-            "name": self.name, 
-            "description": self.description
-        }
-
-class Category(db.Model):
-    __tablename__ = "categories"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    podcasts = db.relationship("Podcast", secondary="podcast_assoc", back_populates="categories")
-
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name")
-
-    def serialize(self):
-        podcasts = []
-        for p in self.podcasts:
-            podcast = p.simple_serialize()
-            podcasts.append(podcast)
-
-        return {"id": self.id, "name": self.name, "podcasts": self.podcasts}
-    
-    def simple_serialize(self):
-        return {"id": self.id, "name": self.name}
