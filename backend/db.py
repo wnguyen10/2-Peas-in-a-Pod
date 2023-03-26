@@ -1,4 +1,4 @@
-from config import Base
+from config import Base, Session
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
@@ -11,6 +11,7 @@ category_assoc = Table(
 
 class Publisher(Base):
     __tablename__ = "publisher"
+    id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     podcasts = relationship('Podcast')
 
@@ -39,7 +40,7 @@ class Podcast(Base):
     image_url = Column(String(75), nullable=True)
     link = Column(String(75), nullable=True)
     duration = Column(Numeric, nullable=False)
-    timestamp = Column(Date, nullable=False)
+    timestamp = Column(Date, nullable=True)
     publisher = Column(Integer, ForeignKey('publisher.id'))
     categories = relationship("Category", secondary="category_assoc", back_populates="podcasts")
 
@@ -54,10 +55,14 @@ class Podcast(Base):
         self.timestamp = kwargs.get("timestamp")
 
     def serialize(self):
+        publisher = Session.query(Publisher).filter_by(id=self.publisher).first()
+        if publisher is not None:
+            publisher = publisher.simple_serialize()
+
         return {
             "id": self.id,
             "name": self.name,
-            "publisher": self.publisher,
+            "publisher": publisher,
             "description": self.description,
             "duration": float(self.duration),
             "timestamp": str(self.timestamp),
