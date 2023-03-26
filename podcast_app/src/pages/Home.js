@@ -1,6 +1,8 @@
 import React from 'react'
+import Results from '../components/Results'
 import User from '../components/User'
 import "./Home.css"
+
 
 function Home() {
   return (
@@ -11,6 +13,10 @@ function Home() {
       <div className='Users'>
         <User num={1} />
         <User num={2} />
+      </div>
+      <button className='submit-button'>Submit</button>
+      <div className='Results'>
+        <Results />
       </div>
     </div>
   )

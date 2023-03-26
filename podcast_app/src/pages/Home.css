@@ -13,3 +13,8 @@
   display: flex;
   flex-direction: row;
 }
+
+.submit-button {
+  border: 0;
+  cursor: pointer;
+}

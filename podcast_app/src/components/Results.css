@@ -1,0 +1,6 @@
+.podcast-card {
+  border: 1;
+  border-radius: 5px;
+  background-color: rgb(215, 255, 183);
+  height: 50px;
+}
