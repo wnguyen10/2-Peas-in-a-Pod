@@ -10,7 +10,6 @@
   margin-left: 10%;
   margin-right: 10%;
   font-size: 5em;
-  /* 40px/16=2.5em */
   display: grid;
   align-items: center; 
   grid-template-columns: 1fr 1fr;
@@ -28,16 +27,32 @@ img {
 
 button {
   font-family: Verdana, sans-serif;
-  border-radius: 25px;
-  border-color: rgb(122, 151, 122);
-  background-color: rgb(73, 121, 73);
-  color: white;
-  padding: 15px 40px;
+  border-color: darkgray;
+  background-color: white;
+  color: darkgray;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
   cursor: grab;
+}
+
+button:hover{
+  background-color: rgb(195, 235, 215);
+}
+
+.match-button button{
+  font-family: Verdana, sans-serif;
+  border-radius: 25px;
+  border-width: 0;
+  background-color: white;
+  color: rgb(133, 131, 131);
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: grab;
+  padding: 20px 30px;
   margin: 20px;
 }
 

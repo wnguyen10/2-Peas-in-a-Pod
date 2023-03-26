@@ -15,7 +15,7 @@ function Home() {
         <User num={1} />
         <User num={2} />
       </div>
-      <div>
+      <div className='match-button'>
         <button type="button">Find Matches!</button>
       </div>
     </div>

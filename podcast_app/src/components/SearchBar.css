@@ -10,7 +10,6 @@
   background-color: white;
   border-width: 2px;
   border-color: rgb(170, 207, 170);
-  /* border-color: rgb(212, 245, 232); */
   border-radius: 25px;
   font-size: 18px;
   padding: 15px;
@@ -23,9 +22,6 @@
   width: 50px;
   border-top-right-radius: 25px;
   border-bottom-right-radius: 25px;
-  /* border-width: 10px; */
-  /* border-color: black; */
-  /* background-color: rgb(212, 245, 232); */
   display: grid;
   place-items: center;
 }
@@ -59,6 +55,7 @@ input:focus {
   display: flex;
   align-items: center;
   color: black;
+  border-color: white;
 }
 
 .dataItem p {
