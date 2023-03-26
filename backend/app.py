@@ -76,8 +76,14 @@ def recommend_podcasts():
     pref1 = body.get("user1")
     pref2 = body.get("user2")
 
-    res = get_top_k_recommendations(pref1, pref2)
+    results = get_top_k_recommendations(pref1, pref2)
 
-    return success_response({"recommendations": res})
+    resp = []
+    for r in results:
+        podcast = Session.query(Podcast).filter_by(name=r[0]).first().serialize()
+        podcast["score"] = r[1]
+        resp.append(podcast)
+
+    return success_response({"recommendations": resp})
 
 app.run(debug=True)
