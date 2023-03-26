@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
-df = pd.read_csv("trunc_metadata.csv")
-doc_by_vocab = pd.read_csv("trunc_tfidf.csv").to_numpy()
+df = pd.read_csv("../data/trunc_metadata.csv")
+doc_by_vocab = pd.read_csv("../data/trunc_tfidf.csv").to_numpy()
 
 shows = df.set_index('show_name').to_dict('index')
 
