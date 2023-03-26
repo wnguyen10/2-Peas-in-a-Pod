@@ -1,6 +1,7 @@
 env/*
 .DS_Store
 Docker/__pycache__
+backend/.env
 
 venv/
 
