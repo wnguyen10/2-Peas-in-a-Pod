@@ -1,4 +1,9 @@
 .App {
   text-align: center;
-  font-family: "Nunito", sans-serif;
+  /* font-family: "Nunito", sans-serif; */
+  font-family: Verdana, sans-serif;
+  color: rgb(104, 102, 102);
+  /* font-family: proxima_nova, "Helvetica Neue", Helvetica, Arial, sans-serif; */
+  /* background-color: #F1FFF6; */
+  background-color: #DDF1E4
 }

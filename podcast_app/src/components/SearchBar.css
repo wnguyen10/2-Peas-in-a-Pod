@@ -3,15 +3,14 @@
   display: flex;
   border: 1;
   border-width: 10px;
-  border-color: black;
+  border-color: white;
 }
 
 .search input {
-  background-color: rgb(234, 234, 234);
-  border: 0;
-  border-radius: 2px;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
+  background-color: white;
+  border-width: 2px;
+  border-color: rgb(170, 207, 170);
+  border-radius: 25px;
   font-size: 18px;
   padding: 15px;
   height: 30px;
@@ -21,14 +20,17 @@
 .searchIcon {
   height: 60px;
   width: 50px;
-  background-color: white;
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
   display: grid;
   place-items: center;
 }
 
 input:focus {
-  outline: none;
+  outline-color: rgb(169, 168, 168);
+  outline-width: 2px;
 }
+
 .searchIcon svg {
   font-size: 35px;
 }
@@ -53,11 +55,13 @@ input:focus {
   display: flex;
   align-items: center;
   color: black;
+  border-color: white;
 }
 
 .dataItem p {
   margin-left: 10px;
 }
+
 a {
   text-decoration: none;
 }
@@ -68,4 +72,4 @@ a:hover {
 
 #clearBtn {
   cursor: pointer;
-} 
+}
