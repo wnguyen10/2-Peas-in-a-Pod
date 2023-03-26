@@ -3,7 +3,7 @@ import os
 from flask import Flask, render_template, request
 from flask_cors import CORS
 from config import Base, Session, mysql_engine
-from db import Category, Podcast, category_assoc
+from db import Podcast, Publisher
  
 # ROOT_PATH for linking with all your files.
 # Feel free to use a config.py or settings.py with a global export variable
@@ -19,7 +19,6 @@ CORS(app)
 # Response Formats
 def success_response(data, code=200):
     return json.dumps(data), code
-
 
 def failure_response(message, code=404):
     return json.dumps({"error": message}), code
@@ -51,6 +50,11 @@ def delete_podcast(id):
         Session.commit()
         return success_response(podcast.serialize())
     return failure_response("Invalid Podcast ID")
+
+@app.route("/api/publishers/")
+def get_publishers():
+    publishers = [p.serialize() for p in Session.query(Publisher).all()]
+    return success_response(publishers)
 
 @app.route("/api/recommendations/")
 def recommend_podcasts():
