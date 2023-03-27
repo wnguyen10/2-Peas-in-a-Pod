@@ -1,0 +1,22 @@
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch master
+# Your branch is up to date with 'origin/master'.
+#
+# Changes to be committed:
+#	modified:   ../../public/favicon.ico
+#	new file:   ../data/logo.png
+#
+# Changes not staged for commit:
+#	modified:   ../../package-lock.json
+#	modified:   ../App.css
+#	modified:   ../components/SearchBar.css
+#	modified:   ../components/User.css
+#	modified:   Home.css
+#	modified:   Home.js
+#
+# Untracked files:
+#	../../public/logo.png
+#
