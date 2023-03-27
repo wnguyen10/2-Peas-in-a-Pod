@@ -1,4 +1,4 @@
-from config import Base
+from config import Base, Session
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
@@ -9,18 +9,39 @@ category_assoc = Table(
     Column("podcast_id", Integer, ForeignKey("podcast.id")),
 )
 
+class Publisher(Base):
+    __tablename__ = "publisher"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+    podcasts = relationship('Podcast')
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "podcasts": [p.simple_serialize() for p in self.podcasts],
+        }
+
+    def simple_serialize(self):
+        return {
+            "id": self.id, 
+            "name": self.name
+        }
 
 class Podcast(Base):
     __tablename__ = "podcast"
     id = Column(Integer, primary_key=True)
     name = Column(String(200), nullable=False)
-    publisher = Column(String(100), nullable=False)
     description = Column(Text, nullable=False)
     spotify_uri = Column(String(50), nullable=True)
     image_url = Column(String(75), nullable=True)
     link = Column(String(75), nullable=True)
     duration = Column(Numeric, nullable=False)
-    timestamp = Column(Date, nullable=False)
+    timestamp = Column(Date, nullable=True)
+    publisher = Column(Integer, ForeignKey('publisher.id'))
     categories = relationship("Category", secondary="category_assoc", back_populates="podcasts")
 
     def __init__(self, **kwargs):
@@ -34,10 +55,14 @@ class Podcast(Base):
         self.timestamp = kwargs.get("timestamp")
 
     def serialize(self):
+        publisher = Session.query(Publisher).filter_by(id=self.publisher).first()
+        if publisher is not None:
+            publisher = publisher.simple_serialize()
+
         return {
             "id": self.id,
             "name": self.name,
-            "publisher": self.publisher,
+            "publisher": publisher,
             "description": self.description,
             "duration": float(self.duration),
             "timestamp": str(self.timestamp),
