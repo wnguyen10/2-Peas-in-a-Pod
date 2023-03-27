@@ -2,9 +2,7 @@ from db import Podcast, Publisher
 from config import Session
 import csv
 
-FILE_NAME = "data/trunc_metadata.csv"
-
-def preprocess(file_name):
+def add_data(file_name):
     with open(file_name, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -22,8 +20,6 @@ def preprocess(file_name):
                 Session.commit()
 
             publisher_id = publisher.serialize()["id"]
-            podcast = Podcast(name=name, spotify_uri=uri, description=description, link=rss_link, duration=duration, publisher=publisher_id)
+            podcast = Podcast(name=name, spotify_uri=uri, description=description, link=rss_link, duration=duration, publisher_id=publisher_id)
             Session.add(podcast)
     Session.commit()
-    
-preprocess(FILE_NAME)
