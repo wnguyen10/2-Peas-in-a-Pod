@@ -1,8 +1,24 @@
+@font-face {
+  font-family: Adelia;
+  src: url("fonts/ADELIA.otf");
+}
+
+@font-face {
+  font-family: "SFPro";
+  src: url("fonts/SFPRODISPLAYREGULAR.OTF");
+}
+
+@font-face {
+  font-family: "SFProBOLD";
+  src: url("fonts/SFPRODISPLAYBOLD.OTF");
+}
+
 .Home {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  font-family: "SFProBOLD";
 }
 
 .Title {
@@ -18,6 +34,7 @@
   padding: 20px;
   border-radius: 10px;
   background-color: rgb(200, 231, 210);
+  font-family: Adelia;
 }
 
 img {
@@ -42,11 +59,11 @@ button:hover{
 }
 
 .match-button button{
-  font-family: Verdana, sans-serif;
   border-radius: 25px;
   border-width: 0;
   background-color: white;
   color: rgb(133, 131, 131);
+  font-family: "SFProBOLD";
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -58,9 +75,18 @@ button:hover{
 
 .text {
   font-size: 5em;
+  font-family: "SFProBOLD";
+  font-size: larger;
+
+}
+
+.p {
+  font-family: "SFProBOLD";
+  font-size: larger;
 }
 
 .Users {
   display: flex;
   flex-direction: row;
+  font-family: "SFProBOLD";
 }
