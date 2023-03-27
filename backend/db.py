@@ -41,12 +41,12 @@ class Podcast(Base):
     link = Column(String(75), nullable=True)
     duration = Column(Numeric, nullable=False)
     timestamp = Column(Date, nullable=True)
-    publisher = Column(Integer, ForeignKey('publisher.id'))
+    publisher_id = Column(Integer, ForeignKey('publisher.id'))
     categories = relationship("Category", secondary="category_assoc", back_populates="podcasts")
 
     def __init__(self, **kwargs):
         self.name = kwargs.get("name")
-        self.publisher = kwargs.get("publisher")
+        self.publisher_id = kwargs.get("publisher_id")
         self.description = kwargs.get("description")
         self.spotify_uri = kwargs.get("spotify_uri")
         self.image_url = kwargs.get("image_url")
@@ -55,7 +55,7 @@ class Podcast(Base):
         self.timestamp = kwargs.get("timestamp")
 
     def serialize(self):
-        publisher = Session.query(Publisher).filter_by(id=self.publisher).first()
+        publisher = Session.query(Publisher).filter_by(id=self.publisher_id).first()
         if publisher is not None:
             publisher = publisher.simple_serialize()
 

@@ -5,6 +5,7 @@ from flask_cors import CORS
 from config import Base, Session, mysql_engine
 from db import Podcast, Publisher
 from ir.recommendation import get_top_k_recommendations
+from preprocess import add_data
  
 # ROOT_PATH for linking with all your files.
 # Feel free to use a config.py or settings.py with a global export variable
@@ -13,8 +14,13 @@ os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..", os.curdir))
 # Path to init.sql file. This file can be replaced with your own file for testing on localhost, but do NOT move the init.sql file
 mysql_engine.load_file_into_db()
 
-# Base.metadata.drop_all(mysql_engine.engine)
-# Base.metadata.create_all(mysql_engine.engine)
+# If no data in tables, add columns to database
+FILE_NAME = "data/trunc_metadata.csv"
+if len(Session.query(Podcast).all()) == 0:
+    add_data(FILE_NAME)
+else:
+    mysql_engine.query_executor("USE podcasts")
+
 app = Flask(__name__)
 
 CORS(app)
@@ -42,7 +48,7 @@ def create_podcast():
     duration = body.get("duration")
     timestamp = body.get("timestamp")
 
-    podcast = Podcast(name=name,publisher=publisher,description=description, duration=duration, timestamp=timestamp)
+    podcast = Podcast(name=name,publisher_id=publisher,description=description, duration=duration, timestamp=timestamp)
     Session.add(podcast)
     Session.commit()
     return success_response(podcast.serialize(), 201)
