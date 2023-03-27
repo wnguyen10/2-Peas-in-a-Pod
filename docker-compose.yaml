@@ -6,7 +6,7 @@ services:
                 - 0.0.0.0:${APP_PORT}:3000
         restart: always
         build:
-                context: ./podcast_app
+                context: ./frontend
                 dockerfile: Dockerfile
     backend_flask_app:
         container_name: ${TEAM_NAME}_backend_app
@@ -36,7 +36,7 @@ services:
         environment:
                 - MYSQL_USER=admin
                 - MYSQL_PASSWORD=admin
-                - MYSQL_DATABASE=kardashiandb
+                - MYSQL_DATABASE=podcasts
                 - MYSQL_ROOT_PASSWORD=admin
         volumes:
                 - flask_volume:/var/lib/mysql

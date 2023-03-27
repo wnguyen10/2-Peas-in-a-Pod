@@ -4,7 +4,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from os import environ
 
 MYSQL_USER = "root"
-MYSQL_USER_PASSWORD = environ.get("MYSQL_PASSWORD")
+MYSQL_USER_PASSWORD = "ym1SQLpw!imt"
 MYSQL_PORT = 3306
 MYSQL_DATABASE = "podcasts"
 
