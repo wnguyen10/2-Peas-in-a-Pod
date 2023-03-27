@@ -2,7 +2,7 @@
   "name": "podcast_app",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:5000",
+  "proxy": "http://4300showcase.infosci.cornell.edu:4546/",
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",

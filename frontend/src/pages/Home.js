@@ -32,7 +32,7 @@ function Home() {
   function getPublishers() {
     axios({
       method: "GET",
-      url: "http://127.0.0.1:5000/api/publishers",
+      url: "http://4300showcase.infosci.cornell.edu:4546/api/publishers",
       // url: "api/publishers",
 
       // headers: {
@@ -78,7 +78,7 @@ function Home() {
 
     axios({
       method: "POST",
-      url: "http://127.0.0.1:5000/api/recommendations/",
+      url: "http://4300showcase.infosci.cornell.edu:4546/api/recommendations/",
       // url: "api/recommendations",
       data: JSON.stringify({
         "user1": user1Publishers,
