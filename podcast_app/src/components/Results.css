@@ -1,0 +1,16 @@
+.podcast-card {
+  border: 1;
+  border-radius: 10px;
+  background-color: rgb(244, 255, 236);
+  padding: 20px;
+  max-width: 800px;
+}
+
+.podcast-name {
+  font-weight: 600;
+  font-size: large;
+}
+
+.podcast-desc {
+  font-size: small;
+}

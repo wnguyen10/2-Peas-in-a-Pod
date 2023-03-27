@@ -22,14 +22,14 @@
 }
 
 .Title {
-  margin-top: 70px;
+  margin-top: 50px;
   margin-left: 10%;
   margin-right: 10%;
   font-size: 5em;
   display: grid;
-  align-items: center; 
+  align-items: center;
   grid-template-columns: 1fr 1fr;
-  column-count:2;
+  column-count: 2;
   column-gap: 5px;
   padding: 20px;
   border-radius: 10px;
@@ -38,8 +38,8 @@
 }
 
 img {
-  width: 100%;
-  height:100%;
+  width: 90%;
+  height: 90%;
 }
 
 button {
@@ -54,11 +54,13 @@ button {
   cursor: grab;
 }
 
-button:hover{
+button:hover {
   background-color: rgb(195, 235, 215);
 }
 
-.match-button button{
+
+
+.match-button button {
   border-radius: 25px;
   border-width: 0;
   background-color: white;
@@ -89,4 +91,8 @@ button:hover{
   display: flex;
   flex-direction: row;
   font-family: "SFProBOLD";
+}
+
+.recommendations {
+  margin: 30px
 }

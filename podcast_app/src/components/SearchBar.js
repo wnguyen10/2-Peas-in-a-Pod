@@ -4,7 +4,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import { useForkRef } from "@mui/material";
 
-function SearchBar({ placeholder, data, addGenre }) {
+function SearchBar({ placeholder, pubData, addPublisher }) {
 
   const [filteredData, setFilteredData] = useState([]);
   const [wordEntered, setWordEntered] = useState("");
@@ -13,8 +13,8 @@ function SearchBar({ placeholder, data, addGenre }) {
   const handleFilter = (event) => {
     const searchWord = event.target.value;
     setWordEntered(searchWord);
-    const newFilter = data.filter((value) => {
-      return value.title.toLowerCase().includes(searchWord.toLowerCase());
+    const newFilter = pubData.filter((value) => {
+      return value.name.toLowerCase().includes(searchWord.toLowerCase());
     });
 
     if (searchWord === "") {
@@ -46,8 +46,8 @@ function SearchBar({ placeholder, data, addGenre }) {
         <div className="dataResult">
           {filteredData.slice(0, 15).map((value, key) => {
             return (
-              <button className="dataItem" onClick={() => { clearInput(); addGenre(value.title) }}>
-                <p>{value.title} </p>
+              <button className="dataItem" key={key} onClick={() => { clearInput(); addPublisher(value.name) }}>
+                <p>{value.name} </p>
               </button>
             );
           })}
