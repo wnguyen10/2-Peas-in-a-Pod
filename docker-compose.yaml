@@ -1,5 +1,13 @@
 version: '3.8'
 services:
+    react:
+        container_name: ${TEAM_NAME}_react
+        ports:
+                - 0.0.0.0:${APP_PORT}:3000
+        restart: always
+        build:
+                context: ./podcast_app
+                dockerfile: Dockerfile
     backend_flask_app:
         container_name: ${TEAM_NAME}_backend_app
         ports:
