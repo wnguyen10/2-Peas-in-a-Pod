@@ -1,10 +1,11 @@
 import React from 'react'
 
-function Podcast({ podcast }) {
+function Podcast({ podcast, num }) {
   return (
     <div className='podcast-card'>
-      <div>Title</div>
-      <div>Publisher</div>
+      <div className='podcast-name'>{num}. {podcast.name}</div>
+      <div className='podcast-pub'>{podcast.publisher.name}</div>
+      <div className='podcast-desc'>{podcast.description}</div>
     </div>
   )
 }
