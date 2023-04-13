@@ -18,8 +18,7 @@ mysql_engine.load_file_into_db()
 FILE_NAME = "data/trunc_metadata.csv"
 if len(Session.query(Podcast).all()) == 0:
     add_data(FILE_NAME)
-else:
-    mysql_engine.query_executor("USE podcasts")
+mysql_engine.query_executor("USE podcasts")
 
 app = Flask(__name__)
 
