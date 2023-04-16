@@ -1,5 +1,5 @@
 import numpy as np
-from ir.recommendation import get_specific_tfidf, show_index_to_name, show_name_to_index, docs_compressed_normed
+from ir.recommendation import get_total_tfidf, show_name_to_index, docs_compressed_normed, get_top_k_recs_given_query
 
 relevant = []
 irrelevant = []
@@ -13,33 +13,11 @@ def add_to_irrelevant(podcast):
     irrelevant.append(podcast)
 
 
-def get_individual_tfidf(individual_prefs):
-    """
-    Params:
-    {
-        individual_prefs: list of an individual's preferred podcast publishers
-    }
-
-    Returns: a tf-idf vector representing an individual's preferred podcasts
-
-    """
-    individual_tfidf = np.zeros(docs_compressed_normed.shape[1])
-
-    for pref in individual_prefs:
-        if pref.type == "Publisher":
-            individual_tfidf += get_specific_tfidf("PUBLISHER", pref.data)
-        elif pref.type == "Genre":
-            individual_tfidf += get_specific_tfidf("GENRE", pref.data)
-        elif pref.type == "Podcast":
-            individual_tfidf += get_specific_tfidf("PODCAST", pref.data)
-
-    return individual_tfidf / len(individual_prefs)
-
-
 def rocchio(user1_pref, user2_pref, relevant=relevant, irrelevant=irrelevant, input_doc_matrix=docs_compressed_normed,
             show_name_to_index=show_name_to_index, a=0.8, b=0.6, c=0.2):
     """ 
-    Params: {query: Numpy array representing two users' preference vectors,
+    Params: {user1_pref: Dict,
+            user2_pref: Dict, 
              relevant: List (the names of relevant podcasts for query),
              irrelevant: List (the names of irrelevant podcasts for query),
              input_doc_matrix: Numpy Array,
@@ -48,8 +26,10 @@ def rocchio(user1_pref, user2_pref, relevant=relevant, irrelevant=irrelevant, in
                              and irrelevant queries, respectively),
     Returns: Numpy Array representing the modified query vector
     """
-    original_query = get_individual_tfidf(
-        user1_pref) + get_individual_tfidf(user2_pref)
+    indiv_one_tfidf = get_total_tfidf(user1_pref["genres"], user1_pref["publishers"], user1_pref["phrases"], user1_pref["podcasts"])
+    indiv_two_tfidf = get_total_tfidf(user2_pref["genres"], user2_pref["publishers"], user2_pref["phrases"], user2_pref["podcasts"])
+    original_query = (indiv_one_tfidf + indiv_two_tfidf) / 2
+
     new_query = np.zeros(len(original_query))
     relevant_vector = np.zeros(len(original_query))
     irrelevant_vector = np.zeros(len(original_query))
@@ -80,4 +60,6 @@ def rocchio(user1_pref, user2_pref, relevant=relevant, irrelevant=irrelevant, in
         if new_query[i] < 0:
             new_query[i] = 0
 
-    return new_query
+    new_recommendations = get_top_k_recs_given_query(new_query)
+
+    return new_recommendations
