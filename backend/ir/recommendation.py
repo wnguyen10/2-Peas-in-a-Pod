@@ -1,9 +1,15 @@
-import pandas as pd
 import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
+import pandas as pd
+import pickle
+from sklearn.preprocessing import normalize
 
 df = pd.read_csv("./data/trunc_metadata.csv")
-doc_by_vocab = pd.read_csv("./data/trunc_tfidf.csv").to_numpy()
+
+docs_compressed = pickle.load(open("./data/docs_compressed.p", "rb" ))
+words_compressed = pickle.load(open("./data/words_compressed.p", "rb"))
+tfidf_vec = pickle.load(open("./data/tfidf.p", "rb"))
+genre_tf_idf = pickle.load(open("./data/genre_tf_idf_dict.p", "rb"))
+publisher_tf_idf = pickle.load(open("./data/publisher_tf_idf_dict.p", "rb"))
 
 shows = df.set_index('show_name').to_dict('index')
 
@@ -11,84 +17,177 @@ shows = df.set_index('show_name').to_dict('index')
 show_name_to_index = {show_name : index for index, show_name in enumerate([show_name for show_name in shows])}
 show_index_to_name = {v:k for k,v in show_name_to_index.items()}
 
-publisher_to_show_name = {}
+words_compressed = words_compressed.transpose()
+words_compressed_normed = normalize(words_compressed, axis = 1)
+docs_compressed_normed = normalize(docs_compressed)
 
-for show_name in shows:
-    publisher = shows[show_name]["publisher"]
-    if publisher in publisher_to_show_name:
-        publisher_to_show_name[publisher].append(show_name)
-    else:
-        publisher_to_show_name[publisher] = [show_name]
-
-def get_publisher_tfidf(publisher_name):
+def get_genre_tfidf(pref_list):
     """
     Params:
     {
-        publisher_name (string): name of podcast publisher
+        pref_list: string list of individual one's preferred genres
     }
 
-    Returns: tf-idf vector representing all podcasts made by publisher_name
-    
+    Requires: Each genre is a valid category (exists in trunc_metadata.csv)
+
+    Returns: a tf-idf vector representing the individual's total genre preferences
     """
-    publisher_shows = publisher_to_show_name[publisher_name]
+    tf_idf_vec = np.zeros(docs_compressed_normed.shape[1])
     
-    publisher_tfidf = np.zeros(doc_by_vocab.shape[1])
-    
-    for show in publisher_shows:
-        show_idx = show_name_to_index[show]
-        show_tfidf = doc_by_vocab[show_idx, :]
-        publisher_tfidf += show_tfidf
+    for genre in pref_list:
+        tf_idf_vec += genre_tf_idf[genre]
         
-    return publisher_tfidf / len(publisher_shows)
+    return tf_idf_vec / len(pref_list)
 
-def get_individual_tfidf(individual_prefs):
+def get_publisher_tfidf(pref_list):
     """
     Params:
     {
-        individual_prefs: list of an individual's preferred podcast publishers
+        pref_list: string list of individual one's preferred publishers
     }
 
-    Returns: a tf-idf vector representing an individual's preferred podcasts
-    
+    Requires: Each publisher is a valid publisher (exists in trunc_metadata.csv)
+
+    Returns: a tf-idf vector representing the individual's total publisher preferences
     """
-    individual_tfidf = np.zeros(doc_by_vocab.shape[1])
+    tf_idf_vec = np.zeros(docs_compressed_normed.shape[1])
     
-    for publisher in individual_prefs:
-        publisher_tfidf = get_publisher_tfidf(publisher)
-        individual_tfidf += publisher_tfidf
+    for publisher in pref_list:
+        tf_idf_vec += publisher_tf_idf[publisher]
         
-    return individual_tfidf / len(individual_prefs)
+    return tf_idf_vec / len(pref_list)
 
-def get_pair_tfidf(pref_one, pref_two):
+def get_phrase_tfidf(pref_list):
     """
     Params:
     {
-        pref_one: list of individual one's preferred podcast publishers
-        pref_two: list of individual two's preferred podcast publishers
+        pref_list: string list of individual one's preferred phrases, where each phrase is a string of words (i.e. "basketball player")
     }
 
-    Returns: a tf-idf vector representing the preferences for a pair of individuals
+    Returns: a tf-idf vector representing the individual's total phrase preferences
+    """
+    tf_idf_vec = np.zeros(docs_compressed_normed.shape[1])
+    
+    for phrase in pref_list:
+        
+        # Use V matrix from SVD to represent query in words_compressed_normed space
+        phrase_tfidf = tfidf_vec.transform([phrase]).toarray()
+        phrase_vec = phrase_tfidf.dot(words_compressed).T.squeeze()
+        tf_idf_vec += phrase_vec
+        
+    return tf_idf_vec / len(pref_list)
+
+def get_podcast_tfidf(pref_list):
+    """
+    Params:
+    {
+        pref_list: string list of individual one's preferred podcasts
+    }
+
+    Requires: Each podcast is a valid podcast title / show name (exists in trunc_metadata.csv)
+
+    Returns: a tf-idf vector representing the individual's total specific podcast preferences
+    """
+    tf_idf_vec = np.zeros(docs_compressed_normed.shape[1])
+    
+    for podcast in pref_list:
+        show_idx = show_name_to_index[podcast]
+        tf_idf_vec += docs_compressed_normed[show_idx, :]
+        
+    return tf_idf_vec / len(pref_list)
+
+def get_specific_tfidf(pref_type, pref_list):
+    """
+    Params:
+    {
+        pref_type: preference type (one of: "GENRE", "PUBLISHER", "PHRASE", "PODCAST")
+        pref_list: string list of respective preference indicated by pref_type
+    }
+
+    Returns: a tf-idf vector representing the individual's specific preference for pref_type
     """
     
-    individual_one_tfidf = get_individual_tfidf(pref_one)
-    individual_two_tfidf = get_individual_tfidf(pref_two)
-    
-    return (individual_one_tfidf + individual_two_tfidf) / 2
+    if pref_type == "GENRE":
+        tf_idf_vec = get_genre_tfidf(pref_list)
+            
+    elif pref_type == "PUBLISHER":
+        tf_idf_vec = get_publisher_tfidf(pref_list)
+        
+    elif pref_type == "PHRASE":
+        tf_idf_vec = get_phrase_tfidf(pref_list)
+        
+    else: # pref_type is "PODCAST"
+        tf_idf_vec = get_podcast_tfidf(pref_list)
+                
+    return tf_idf_vec
 
-def get_top_k_recommendations(pref_one, pref_two, k = 10):
-    """ 
-    Params: 
+def get_total_tfidf(genres, publishers, phrases, podcasts):
+    """
+    Params:
     {
-        pref_one: list of individual one's preferred podcast publishers
-        pref_two: list of individual two's preferred podcast publishers
+        genres: string list of individual one's preferred genres
+        publishers: string list of individual one's preferred publishers
+        phrases: string list of individual one's preferred phrases
+        podcasts: string list of individual one's preferred podcast titles
+    }
+
+    Requires: For each string in genres, publishers, and podcasts, the preference must exist in the trunc_metadata.csv table
+
+    Returns: a tf-idf vector representing the individual's tastes considering all inputted preferences
+    """
+    categories_considered = 0
+    
+    tf_idf_vec = np.zeros(docs_compressed_normed.shape[1])
+    
+    if genres:
+        tf_idf_vec += get_specific_tfidf("GENRE", genres)
+        categories_considered += 1
+        
+    if publishers:
+        tf_idf_vec += get_specific_tfidf("PUBLISHER" , publishers)
+        categories_considered += 1
+        
+    if phrases:
+        tf_idf_vec += get_specific_tfidf("PHRASE" , phrases)
+        categories_considered += 1
+        
+    if podcasts:
+        tf_idf_vec += get_specific_tfidf("PODCAST" , podcasts)
+        categories_considered += 1
+    
+    if categories_considered == 0:
+        return tf_idf_vec
+    
+    return tf_idf_vec / categories_considered
+
+def get_top_k_recommendations(indiv_one_pref, indiv_two_pref, k = 10):
+    """
+    Params:
+    {
+        indiv_one_pref: preference dictionary for individual one, formatted as such:
+
+            indiv_one_pref = 
+            {
+                "genres": [],
+                "publishers": [],
+                "phrases": []
+                "podcasts": []
+            }, where each list is a string list of the individual's specific preferences
+
+        indiv_two_pref: preference dictionary for individual two, formatted exactly as indiv_one_pref
         k: number of recommendations returned (default = 10)
     }
 
+    Requires: For each string in the individual preference dictionaries in genres, publishers, and podcasts, the preference must exist in the trunc_metadata.csv table
+
     Returns: a list of k sorted tuples in format (podcast name, cosine similarity) 
     """
-    pair_tfidf = get_pair_tfidf(pref_one, pref_two)
-    pair_tfidf = pair_tfidf.reshape((1, doc_by_vocab.shape[1]))
-    similarities = cosine_similarity(pair_tfidf, doc_by_vocab)[0]
+    indiv_one_tfidf = get_total_tfidf(indiv_one_pref["genres"], indiv_one_pref["publishers"], indiv_one_pref["phrases"], indiv_one_pref["podcasts"])
+    indiv_two_tfidf = get_total_tfidf(indiv_two_pref["genres"], indiv_two_pref["publishers"], indiv_two_pref["phrases"], indiv_two_pref["podcasts"])
+    
+    avg_tfidf = (indiv_one_tfidf + indiv_two_tfidf) / 2
+    
+    similarities = docs_compressed_normed.dot(avg_tfidf)
     sorted_idx = np.argsort(similarities)[::-1]
     
     top_matches = []

@@ -5,6 +5,7 @@ from flask_cors import CORS
 from config import Base, Session, mysql_engine
 from db import Podcast, Publisher
 from ir.recommendation import get_top_k_recommendations
+from ir.rocchio import rocchio, add_to_irrelevant, add_to_relevant
 from preprocess import add_data
 
 # ROOT_PATH for linking with all your files.
@@ -18,8 +19,7 @@ mysql_engine.load_file_into_db()
 FILE_NAME = "data/trunc_metadata.csv"
 if len(Session.query(Podcast).all()) == 0:
     add_data(FILE_NAME)
-else:
-    mysql_engine.query_executor("USE podcasts")
+mysql_engine.query_executor("USE podcasts")
 
 app = Flask(__name__)
 
@@ -102,6 +102,23 @@ def recommend_podcasts():
         resp.append(podcast)
 
     return success_response({"recommendations": resp})
+
+@app.route("/api/feedback/", methods=["POST"])
+def recommend_podcasts():
+    body = json.loads(request.data)
+    pref1 = body.get("user1")
+    pref2 = body.get("user2")
+
+    if body["relevant"]:
+        add_to_relevant(body["podcast"])
+    else:
+        add_to_irrelevant(body["podcast"])
+
+
+    modified_query = rocchio(pref1, pref2)
+
+    # TODO: figure out what to do with modified query
+    return success_response(modified_query)
 
 
 @app.teardown_request
