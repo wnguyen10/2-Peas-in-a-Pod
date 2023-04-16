@@ -5,6 +5,7 @@ import "./Home.css";
 import logo from "../data/logo.png";
 import axios from "axios";
 import Podcast from "../components/Podcast";
+import Likedislike from "../components/Likedislike"
 import { FormControlLabel, Switch, ToggleButton } from "@mui/material";
 
 function Home() {
@@ -187,11 +188,19 @@ function Home() {
         {typeof recs !== undefined &&
           recs.length !== 0 &&
           recs.map((podcast, key) => {
-            return (
-              <div className="recommendations" key={key}>
-                <Podcast podcast={podcast} num={key + 1} />
+            return <div className="recommendations">
+              <div className="column">
+                <div className="result" key={key}>
+                  <Podcast podcast={podcast} num={key + 1} />
+                </div>
               </div>
-            );
+              <div className="column">
+                <div class="rating">
+                  <Likedislike podcast={podcast} />
+                </div>
+
+              </div>
+            </div>
           })}
       </div>
     </div>
