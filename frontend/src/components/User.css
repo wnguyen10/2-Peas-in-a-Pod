@@ -9,8 +9,6 @@
 }
 
 .User {
-  /* width: 100vw;
-  height: 100vh; */
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -33,7 +31,9 @@ body {
   align-items: center;
   justify-content: center;
   padding: 5px;
-  min-width: 100px;
+  min-width: 50px;
+  font-size: 10pt;
+  text-align: center;
 }
 
 .tags {
@@ -46,6 +46,4 @@ body {
   cursor: pointer;
   background-color: rgb(156, 255, 150);
   margin-left: auto;
-  width: 25px;
-
 }

@@ -1,0 +1,27 @@
+.rating {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+}
+
+.like,
+.dislike {
+  display: inline-block;
+  cursor: pointer;
+  margin: 10px;
+}
+
+.dislike:hover,
+.like:hover {
+  color: #93C572;
+  transition: all .2s ease-in-out;
+  transform: scale(1.1);
+}
+
+.active {
+  color: #93C572;
+}
+
+.inactive {
+  color: black;
+}
