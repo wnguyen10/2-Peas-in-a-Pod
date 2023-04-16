@@ -8,26 +8,45 @@ import Podcast from "../components/Podcast";
 import { FormControlLabel, Switch, ToggleButton } from "@mui/material";
 
 function Home() {
-  const [advancedSearch, setAdvancedSearch] = useState(false);
-  const [pubData, setPubData] = useState([]);
   const [recs, setRecs] = useState([]);
+  const [advancedSearch, setAdvancedSearch] = useState(false);
+
+  const [pubData, setPubData] = useState([]);
+  const [genreData, setGenreData] = useState([]);
+  const [podcastData, setPodcastData] = useState([]);
   const [user1Publishers, setUser1Publishers] = useState([]);
   const [user2Publishers, setUser2Publishers] = useState([]);
+  const [user1Genres, setUser1Genres] = useState([]);
+  const [user2Genres, setUser2Genres] = useState([]);
+  const [user1Podcasts, setUser1Podcasts] = useState([]);
+  const [user2Podcasts, setUser2Podcasts] = useState([]);
+
+  const [user1Phrases, setUser1Phrases] = useState([]);
+  const [user2Phrases, setUser2Phrases] = useState([]);
 
   useEffect(() => {
     getPublishers();
-    // getPodcasts();
+    getPodcasts();
+    getGenres();
   }, []);
 
   function getPodcasts() {
     axios({
       method: "GET",
-      url: "/api/podcasts",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-      },
-    });
+      url: "http://4300showcase.infosci.cornell.edu:4546/api/podcasts",
+    })
+      .then((response) => {
+        const res = response.data;
+        console.log("fetched podcasts");
+        setPubData(res.podcasts);
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log(error.response);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        }
+      });
   }
 
   function getPublishers() {
@@ -49,34 +68,43 @@ function Home() {
       });
   }
 
+  function getGenres() {
+    axios({
+      method: "GET",
+      url: "http://4300showcase.infosci.cornell.edu:4546/api/genres",
+    })
+      .then((response) => {
+        const res = response.data;
+        console.log("fetched genres");
+        setPubData(res.genres);
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log(error.response);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        }
+      });
+  }
+
   function getMatches() {
-    // var myHeaders = new Headers();
-    // myHeaders.append("Content-Type", "application/json");
-
-    // var raw = JSON.stringify({
-    //   "user1": user1Publishers,
-    //   "user2": user2Publishers
-    // });
-
-    // var requestOptions = {
-    //   method: 'POST',
-    //   headers: myHeaders,
-    //   body: raw,
-    //   redirect: 'follow'
-    // };
-
-    // fetch("api/recommendations/", requestOptions)
-    //   .then(response => response.text())
-    //   .then(result => console.log(result))
-    //   .catch(error => console.log('error', error));
-
     axios({
       method: "POST",
       url: "http://4300showcase.infosci.cornell.edu:4546/api/recommendations/",
       // url: "api/recommendations",
       data: JSON.stringify({
-        user1: user1Publishers,
-        user2: user2Publishers,
+        user1: {
+          genres: user1Publishers,
+          publishers: user1Publishers,
+          phrases: user1Phrases,
+          podcasts: user1Podcasts,
+        },
+        user2: {
+          genres: user2Publishers,
+          publishers: user2Publishers,
+          phrases: user2Phrases,
+          podcasts: user2Podcasts,
+        },
       }),
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -118,16 +146,28 @@ function Home() {
         <User
           num={1}
           pubData={pubData}
-          publishers={user1Publishers}
-          setPublishers={setUser1Publishers}
-          advanced={advancedSearch}
+          publisherPrefs={user1Publishers}
+          setPublisherPrefs={setUser1Publishers}
+          genreData={genreData}
+          genrePrefs={user1Genres}
+          setGenrePrefs={setUser1Genres}
+          podcastData={podcastData}
+          podcastPrefs={user1Podcasts}
+          setPodcastPrefs={setUser1Podcasts}
+          isAdvanced={advancedSearch}
         />
         <User
           num={2}
           pubData={pubData}
-          publishers={user2Publishers}
-          setPublishers={setUser2Publishers}
-          advanced={advancedSearch}
+          publisherPrefs={user2Publishers}
+          setPublisherPrefs={setUser2Publishers}
+          genreData={genreData}
+          genrePrefs={user2Genres}
+          setGenrePrefs={setUser2Genres}
+          podcastData={podcastData}
+          podcastPrefs={user2Podcasts}
+          setPodcastPrefs={setUser2Podcasts}
+          isAdvanced={advancedSearch}
         />
       </div>
 

@@ -1,19 +1,46 @@
 import React, { useState, useEffect } from "react";
 import SearchBar from "./SearchBar";
-// import PodcastData from "../data/podcasts.json"
 import "./User.css";
 import Tag from "./Tag";
 
-function User({ num, pubData, publishers, setPublishers, advanced }) {
+function User({
+  num,
+  pubData,
+  publisherPrefs,
+  setPublisherPrefs,
+  genreData,
+  genrePrefs,
+  setGenrePrefs,
+  podcastData,
+  podcastPrefs,
+  setPodcastPrefs,
+  isAdvanced,
+}) {
   function addPublisher(pub) {
-    if (!publishers.includes(pub)) {
-      setPublishers((prev) => [...prev, pub]);
+    if (!publisherPrefs.includes(pub)) {
+      setPublisherPrefs((prev) => [...prev, pub]);
     }
   }
 
-  function handleDelete(pub) {
-    if (publishers.includes(pub)) {
-      setPublishers(publishers.filter((x) => x != pub));
+  function addPodcast(pod) {
+    if (!podcastPrefs.includes(pod)) {
+      setPodcastPrefs((prev) => [...prev, pod]);
+    }
+  }
+
+  function addGenre(genre) {
+    if (!genrePrefs.includes(genre)) {
+      setGenrePrefs((prev) => [...prev, genre]);
+    }
+  }
+
+  function handleDelete(x, type) {
+    if (type === "podcast") {
+      setPodcastPrefs(podcastPrefs.filter((p) => p != x));
+    } else if (type === "genre") {
+      setGenrePrefs(genrePrefs.filter((p) => p != x));
+    } else if (type === "publishers") {
+      setPublisherPrefs(publisherPrefs.filter((p) => p != x));
     }
   }
 
@@ -21,7 +48,7 @@ function User({ num, pubData, publishers, setPublishers, advanced }) {
     <div className="User">
       <h2>User {num}</h2>
 
-      {advanced && (
+      {isAdvanced && (
         <>
           <SearchBar
             placeholder={"Enter your favorite podcasts..."}
@@ -31,16 +58,16 @@ function User({ num, pubData, publishers, setPublishers, advanced }) {
           <SearchBar
             placeholder={"Enter your favorite genres..."}
             pubData={pubData}
-            addPublisher={addPublisher}
+            addPublisher={addGenre}
           />
           <SearchBar
             placeholder={"Enter your favorite publishers..."}
             pubData={pubData}
-            addPublisher={addPublisher}
+            addPublisher={addPodcast}
           />
         </>
       )}
-      {!advanced && (
+      {!isAdvanced && (
         <SearchBar
           // placeholder={"Enter your favorite publishers..."}
           pubData={pubData}
@@ -49,9 +76,41 @@ function User({ num, pubData, publishers, setPublishers, advanced }) {
       )}
 
       <div className="tags">
-        {publishers.length != 0 &&
-          publishers.map((value, key) => {
-            return <Tag key={key} label={value} onDelete={handleDelete} />;
+        {podcastPrefs.length != 0 &&
+          podcastPrefs.map((value, key) => {
+            return (
+              <Tag
+                key={key}
+                label={value}
+                onDelete={(x) => handleDelete(x, "podcast")}
+              />
+            );
+          })}
+      </div>
+
+      <div className="tags">
+        {genrePrefs.length != 0 &&
+          genrePrefs.map((value, key) => {
+            return (
+              <Tag
+                key={key}
+                label={value}
+                onDelete={(x) => handleDelete(x, "genre")}
+              />
+            );
+          })}
+      </div>
+
+      <div className="tags">
+        {publisherPrefs.length != 0 &&
+          publisherPrefs.map((value, key) => {
+            return (
+              <Tag
+                key={key}
+                label={value}
+                onDelete={(x) => handleDelete(x, "publisher")}
+              />
+            );
           })}
       </div>
     </div>
