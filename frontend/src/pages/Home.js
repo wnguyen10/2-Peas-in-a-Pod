@@ -5,9 +5,10 @@ import "./Home.css";
 import logo from "../data/logo.png";
 import axios from "axios";
 import Podcast from "../components/Podcast";
-
+import { FormControlLabel, Switch, ToggleButton } from "@mui/material";
 
 function Home() {
+  const [advancedSearch, setAdvancedSearch] = useState(false);
   const [pubData, setPubData] = useState([]);
   const [recs, setRecs] = useState([]);
   const [user1Publishers, setUser1Publishers] = useState([]);
@@ -23,22 +24,16 @@ function Home() {
       method: "GET",
       url: "/api/podcasts",
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-      }
-    })
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+      },
+    });
   }
 
   function getPublishers() {
     axios({
       method: "GET",
       url: "http://4300showcase.infosci.cornell.edu:4546/api/publishers",
-      // url: "api/publishers",
-
-      // headers: {
-      //   'Access-Control-Allow-Origin': '*',
-      //   'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-      // }
     })
       .then((response) => {
         const res = response.data;
@@ -70,7 +65,6 @@ function Home() {
     //   redirect: 'follow'
     // };
 
-
     // fetch("api/recommendations/", requestOptions)
     //   .then(response => response.text())
     //   .then(result => console.log(result))
@@ -81,21 +75,20 @@ function Home() {
       url: "http://4300showcase.infosci.cornell.edu:4546/api/recommendations/",
       // url: "api/recommendations",
       data: JSON.stringify({
-        "user1": user1Publishers,
-        "user2": user2Publishers
+        user1: user1Publishers,
+        user2: user2Publishers,
       }),
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-        'Content-Type': 'application/json'
-      }
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+        "Content-Type": "application/json",
+      },
     })
       .then((response) => {
         const res = response.data;
         console.log("fetched recs");
-        console.log(res)
+        console.log(res);
         setRecs(res.recommendations);
-
       })
       .catch((error) => {
         if (error.response) {
@@ -104,6 +97,11 @@ function Home() {
           console.log(error.response.headers);
         }
       });
+  }
+
+  function handleChange(event) {
+    console.log(event);
+    setAdvancedSearch(!advancedSearch);
   }
 
   return (
@@ -122,23 +120,37 @@ function Home() {
           pubData={pubData}
           publishers={user1Publishers}
           setPublishers={setUser1Publishers}
+          advanced={advancedSearch}
         />
         <User
           num={2}
           pubData={pubData}
           publishers={user2Publishers}
           setPublishers={setUser2Publishers}
+          advanced={advancedSearch}
         />
       </div>
+
+      <FormControlLabel
+        control={<Switch />}
+        label="Advanced search"
+        labelPlacement="start"
+        onChange={handleChange}
+      />
       <div className="match-button">
         <button type="button" onClick={getMatches}>
           Find Matches!
         </button>
       </div>
       <div>
-        {typeof recs !== undefined && recs.length !== 0 &&
+        {typeof recs !== undefined &&
+          recs.length !== 0 &&
           recs.map((podcast, key) => {
-            return <div className="recommendations" key={key}><Podcast podcast={podcast} num={key + 1} /></div>;
+            return (
+              <div className="recommendations" key={key}>
+                <Podcast podcast={podcast} num={key + 1} />
+              </div>
+            );
           })}
       </div>
     </div>
