@@ -1,5 +1,5 @@
 import numpy as np
-from recommendation import get_publisher_tfidf, show_index_to_name, show_name_to_index, doc_by_vocab
+from recommendation import get_publisher_tfidf, show_index_to_name, show_name_to_index, docs_compressed_normed
 
 relevant = []
 irrelevant = []
@@ -21,7 +21,7 @@ def get_individual_tfidf(individual_prefs):
     Returns: a tf-idf vector representing an individual's preferred podcasts
     
     """
-    individual_tfidf = np.zeros(doc_by_vocab.shape[1])
+    individual_tfidf = np.zeros(docs_compressed_normed.shape[1])
     
     for pref in individual_prefs:
         if pref.type == "Publisher":
@@ -35,7 +35,7 @@ def get_individual_tfidf(individual_prefs):
         
     return individual_tfidf / len(individual_prefs)
 
-def rocchio(user1_pref, user2_pref, relevant=relevant, irrelevant=irrelevant, input_doc_matrix=doc_by_vocab, \
+def rocchio(user1_pref, user2_pref, relevant=relevant, irrelevant=irrelevant, input_doc_matrix=docs_compressed_normed, \
             show_name_to_index=show_name_to_index,a=0.8, b=0.6, c=0.2):
     """ 
     Params: {query: Numpy array representing two users' preference vectors,
