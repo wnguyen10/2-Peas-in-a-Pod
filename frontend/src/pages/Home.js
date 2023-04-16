@@ -38,7 +38,7 @@ function Home() {
       .then((response) => {
         const res = response.data;
         console.log("fetched podcasts");
-        setPubData(res.podcasts);
+        setPodcastData(res.podcasts);
       })
       .catch((error) => {
         if (error.response) {
@@ -76,7 +76,7 @@ function Home() {
       .then((response) => {
         const res = response.data;
         console.log("fetched genres");
-        setPubData(res.genres);
+        setGenreData(res.categories);
       })
       .catch((error) => {
         if (error.response) {
