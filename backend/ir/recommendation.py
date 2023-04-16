@@ -196,3 +196,21 @@ def get_top_k_recommendations(indiv_one_pref, indiv_two_pref, k = 10):
 
     return top_matches
 
+def get_top_k_recs_given_query(query, k = 10):
+    """
+    Params:
+    {
+        query: TF-IDF vector representing a query (shape of (40, ))
+        k: number of recommendations returned (default = 10)
+    }
+
+    Returns: a list of k sorted tuples in format (podcast name, cosine similarity) 
+    """
+    similarities = docs_compressed_normed.dot(query)
+    sorted_idx = np.argsort(similarities)[::-1]
+
+    top_matches = []
+    for i in range(k):
+        top_matches.append((show_index_to_name[sorted_idx[i]], similarities[sorted_idx[i]]))
+
+    return top_matches
