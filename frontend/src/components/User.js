@@ -14,6 +14,7 @@ function User({
   podcastData,
   podcastPrefs,
   setPodcastPrefs,
+  setPhrases,
   isAdvanced,
 }) {
   function addPublisher(pub) {
@@ -52,67 +53,69 @@ function User({
         <>
           <SearchBar
             placeholder={"Enter your favorite podcasts..."}
-            pubData={pubData}
-            addPublisher={addPublisher}
+            data={podcastData}
+            addItem={addPublisher}
+            setPhrases={setPhrases}
           />
+          <div className="tags">
+            {podcastPrefs.length != 0 &&
+              podcastPrefs.map((value, key) => {
+                return (
+                  <Tag
+                    key={key}
+                    label={value}
+                    onDelete={(x) => handleDelete(x, "podcast")}
+                  />
+                );
+              })}
+          </div>
           <SearchBar
             placeholder={"Enter your favorite genres..."}
-            pubData={pubData}
-            addPublisher={addGenre}
+            data={genreData}
+            addItem={addGenre}
+            setPhrases={setPhrases}
           />
+          <div className="tags">
+            {genrePrefs.length != 0 &&
+              genrePrefs.map((value, key) => {
+                return (
+                  <Tag
+                    key={key}
+                    label={value}
+                    onDelete={(x) => handleDelete(x, "genre")}
+                  />
+                );
+              })}
+          </div>
           <SearchBar
             placeholder={"Enter your favorite publishers..."}
-            pubData={pubData}
-            addPublisher={addPodcast}
+            data={pubData}
+            addItem={addPodcast}
+            setPhrases={setPhrases}
           />
+          <div className="tags">
+            {publisherPrefs.length != 0 &&
+              publisherPrefs.map((value, key) => {
+                return (
+                  <Tag
+                    key={key}
+                    label={value}
+                    onDelete={(x) => handleDelete(x, "publisher")}
+                  />
+                );
+              })}
+          </div>
         </>
       )}
       {!isAdvanced && (
         <SearchBar
-          // placeholder={"Enter your favorite publishers..."}
+          placeholder={"Enter a phrase..."}
           pubData={pubData}
           addPublisher={addPublisher}
+          isAdvanced={isAdvanced}
+          setPhrases={setPhrases}
         />
       )}
-
-      <div className="tags">
-        {podcastPrefs.length != 0 &&
-          podcastPrefs.map((value, key) => {
-            return (
-              <Tag
-                key={key}
-                label={value}
-                onDelete={(x) => handleDelete(x, "podcast")}
-              />
-            );
-          })}
-      </div>
-
-      <div className="tags">
-        {genrePrefs.length != 0 &&
-          genrePrefs.map((value, key) => {
-            return (
-              <Tag
-                key={key}
-                label={value}
-                onDelete={(x) => handleDelete(x, "genre")}
-              />
-            );
-          })}
-      </div>
-
-      <div className="tags">
-        {publisherPrefs.length != 0 &&
-          publisherPrefs.map((value, key) => {
-            return (
-              <Tag
-                key={key}
-                label={value}
-                onDelete={(x) => handleDelete(x, "publisher")}
-              />
-            );
-          })}
-      </div>
     </div>
   );
 }

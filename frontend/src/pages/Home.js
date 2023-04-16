@@ -91,7 +91,6 @@ function Home() {
     axios({
       method: "POST",
       url: "http://4300showcase.infosci.cornell.edu:4546/api/recommendations/",
-      // url: "api/recommendations",
       data: JSON.stringify({
         user1: {
           genres: user1Publishers,
@@ -154,6 +153,7 @@ function Home() {
           podcastData={podcastData}
           podcastPrefs={user1Podcasts}
           setPodcastPrefs={setUser1Podcasts}
+          setPhrases={setUser1Phrases}
           isAdvanced={advancedSearch}
         />
         <User
@@ -167,6 +167,7 @@ function Home() {
           podcastData={podcastData}
           podcastPrefs={user2Podcasts}
           setPodcastPrefs={setUser2Podcasts}
+          setPhrases={setUser2Phrases}
           isAdvanced={advancedSearch}
         />
       </div>
