@@ -3,9 +3,9 @@ import os
 from flask import Flask, render_template, request
 from flask_cors import CORS
 from config import Base, Session, mysql_engine
-from db import Podcast, Publisher
+from db import Podcast, Publisher, Category
 from ir.recommendation import get_top_k_recommendations
-from ir.rocchio import rocchio, add_to_irrelevant, add_to_relevant
+# from ir.rocchio import rocchio, add_to_irrelevant, add_to_relevant
 from preprocess import add_data
 
 # ROOT_PATH for linking with all your files.
@@ -85,6 +85,12 @@ def get_podcasts():
     res = {"podcasts": podcasts}
     return success_response(res)
 
+@app.route("/api/genres/")
+def get_genres():
+    categories = [c.simple_serialize() for c in Session.query(Category).all()]
+
+    res = {"categories": categories}
+    return success_response(res)
 
 @app.route("/api/recommendations/", methods=["POST"])
 def recommend_podcasts():
@@ -103,22 +109,22 @@ def recommend_podcasts():
 
     return success_response({"recommendations": resp})
 
-@app.route("/api/feedback/", methods=["POST"])
-def recommend_podcasts():
-    body = json.loads(request.data)
-    pref1 = body.get("user1")
-    pref2 = body.get("user2")
+# @app.route("/api/feedback/", methods=["POST"])
+# def recommend_podcasts():
+#     body = json.loads(request.data)
+#     pref1 = body.get("user1")
+#     pref2 = body.get("user2")
 
-    if body["relevant"]:
-        add_to_relevant(body["podcast"])
-    else:
-        add_to_irrelevant(body["podcast"])
+#     if body["relevant"]:
+#         add_to_relevant(body["podcast"])
+#     else:
+#         add_to_irrelevant(body["podcast"])
 
 
-    modified_query = rocchio(pref1, pref2)
+#     modified_query = rocchio(pref1, pref2)
 
-    # TODO: figure out what to do with modified query
-    return success_response(modified_query)
+#     # TODO: figure out what to do with modified query
+#     return success_response(modified_query)
 
 
 @app.teardown_request
@@ -126,4 +132,4 @@ def remove_session(ex=None):
     Session.remove()
 
 
-# app.run(debug=True)
+app.run(debug=True)
