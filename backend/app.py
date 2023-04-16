@@ -103,8 +103,9 @@ def recommend_podcasts():
 
     return success_response({"recommendations": resp})
 
+
 @app.route("/api/feedback/", methods=["POST"])
-def recommend_podcasts():
+def recommend_podcasts_feedback():
     body = json.loads(request.data)
     pref1 = body.get("user1")
     pref2 = body.get("user2")
@@ -113,7 +114,6 @@ def recommend_podcasts():
         add_to_relevant(body["podcast"])
     else:
         add_to_irrelevant(body["podcast"])
-
 
     modified_query = rocchio(pref1, pref2)
 
