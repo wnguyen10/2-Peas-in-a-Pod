@@ -27,6 +27,8 @@ CORS(app)
 
 # Response Formats
 
+pref1 = {}
+pref2 = {}
 
 def success_response(data, code=200):
     return json.dumps(data), code
@@ -96,6 +98,9 @@ def get_genres():
 
 @app.route("/api/recommendations/", methods=["POST"])
 def recommend_podcasts():
+    global pref1
+    global pref2 
+
     body = json.loads(request.data)
     pref1 = body.get("user1")
     pref2 = body.get("user2")
@@ -115,18 +120,22 @@ def recommend_podcasts():
 @app.route("/api/feedback/", methods=["POST"])
 def recommend_podcasts_feedback():
     body = json.loads(request.data)
-    pref1 = body.get("user1")
-    pref2 = body.get("user2")
 
     if body["relevant"]:
         add_to_relevant(body["podcast"])
     else:
         add_to_irrelevant(body["podcast"])
 
-    modified_query = rocchio(pref1, pref2)
+    results = rocchio(pref1, pref2)
 
-#     # TODO: figure out what to do with modified query
-#     return success_response(modified_query)
+    resp = []
+    for r in results:
+        podcast = Session.query(Podcast).filter_by(
+            name=r[0]).first().serialize()
+        podcast["score"] = r[1]
+        resp.append(podcast)
+    
+    return success_response(resp)
 
 
 @app.teardown_request

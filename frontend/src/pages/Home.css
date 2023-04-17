@@ -94,5 +94,20 @@ button:hover {
 }
 
 .recommendations {
-  margin: 30px
+  margin: 30px;
+  display: flex;
+}
+
+.column {
+  flex: auto;
+}
+
+.result {
+  width: 800px;
+}
+
+.rating {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
 }
