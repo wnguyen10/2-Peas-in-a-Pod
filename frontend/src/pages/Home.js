@@ -34,7 +34,7 @@ function Home() {
   function getPodcasts() {
     axios({
       method: "GET",
-      url: "http://4300showcase.infosci.cornell.edu:4546/api/podcasts",
+      url: "http:localhost:5000/api/podcasts",
     })
       .then((response) => {
         const res = response.data;
@@ -53,7 +53,7 @@ function Home() {
   function getPublishers() {
     axios({
       method: "GET",
-      url: "http://4300showcase.infosci.cornell.edu:4546/api/publishers",
+      url: "http:localhost:5000/api/publishers",
     })
       .then((response) => {
         const res = response.data;
@@ -72,7 +72,7 @@ function Home() {
   function getGenres() {
     axios({
       method: "GET",
-      url: "http://4300showcase.infosci.cornell.edu:4546/api/genres",
+      url: "http:localhost:5000/api/genres",
     })
       .then((response) => {
         const res = response.data;
@@ -91,7 +91,7 @@ function Home() {
   function getMatches() {
     axios({
       method: "POST",
-      url: "http://4300showcase.infosci.cornell.edu:4546/api/recommendations/",
+      url: "http:localhost:5000/api/recommendations/",
       data: JSON.stringify({
         user1: {
           genres: user1Genres,
@@ -203,9 +203,8 @@ function Home() {
               </div>
               <div className="column">
                 <div class="rating">
-                  <Likedislike podcast={podcast} />
+                  <Likedislike podcast={podcast} recs={recs} setRecs={setRecs} />
                 </div>
-
               </div>
             </div>
           })}
