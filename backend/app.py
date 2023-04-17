@@ -120,13 +120,15 @@ def recommend_podcasts():
 @app.route("/api/feedback/", methods=["POST"])
 def recommend_podcasts_feedback():
     body = json.loads(request.data)
+    # TODO: frontend pls pass the current recs in the body of the http POST request
+    current_recs = []
 
     if body["relevant"]:
         add_to_relevant(body["podcast"])
     else:
         add_to_irrelevant(body["podcast"])
 
-    results = rocchio(pref1, pref2)
+    results = rocchio(pref1, pref2, current_recs)
 
     resp = []
     for r in results:
@@ -143,4 +145,4 @@ def remove_session(ex=None):
     Session.remove()
 
 
-# app.run(debug=True)
+app.run(debug=True)
