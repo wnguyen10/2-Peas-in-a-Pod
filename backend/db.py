@@ -73,7 +73,6 @@ class Podcast(Base):
         return {
             "id": self.id, 
             "name": self.name, 
-            "description": self.description
         }
 
 class Category(Base):
