@@ -1,10 +1,10 @@
 CREATE DATABASE IF NOT EXISTS podcasts;
 USE podcasts;
 
--- DROP TABLE if exists category_assoc;
--- DROP TABLE if exists category;
--- DROP TABLE if exists podcast;
--- DROP TABLE if exists publisher;
+DROP TABLE if exists category_assoc;
+DROP TABLE if exists category;
+DROP TABLE if exists podcast;
+DROP TABLE if exists publisher;
 
 CREATE TABLE IF NOT EXISTS publisher(
     id int not null auto_increment,
