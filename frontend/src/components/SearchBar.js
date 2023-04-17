@@ -23,7 +23,7 @@ function SearchBar({ placeholder, data, addItem, setPhrases, isAdvanced }) {
         setFilteredData(newFilter);
       }
     } else {
-      setPhrases([wordEntered]);
+      setPhrases([event.target.value]);
     }
   };
 
@@ -63,7 +63,7 @@ function SearchBar({ placeholder, data, addItem, setPhrases, isAdvanced }) {
                       addItem(value.name);
                     }}
                   >
-                    <p>{value.name} </p>
+                    <div>{value.name}</div>
                   </button>
                 );
               })}

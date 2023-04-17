@@ -93,13 +93,13 @@ function Home() {
       url: "http://4300showcase.infosci.cornell.edu:4546/api/recommendations/",
       data: JSON.stringify({
         user1: {
-          genres: user1Publishers,
+          genres: user1Genres,
           publishers: user1Publishers,
           phrases: user1Phrases,
           podcasts: user1Podcasts,
         },
         user2: {
-          genres: user2Publishers,
+          genres: user2Genres,
           publishers: user2Publishers,
           phrases: user2Phrases,
           podcasts: user2Podcasts,
@@ -127,8 +127,15 @@ function Home() {
   }
 
   function handleChange(event) {
-    console.log(event);
     setAdvancedSearch(!advancedSearch);
+    setUser1Publishers([]);
+    setUser2Publishers([]);
+    setUser1Genres([]);
+    setUser2Genres([]);
+    setUser1Podcasts([]);
+    setUser2Podcasts([]);
+    setUser1Phrases([]);
+    setUser2Phrases([]);
   }
 
   return (

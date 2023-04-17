@@ -40,7 +40,7 @@ function User({
       setPodcastPrefs(podcastPrefs.filter((p) => p != x));
     } else if (type === "genre") {
       setGenrePrefs(genrePrefs.filter((p) => p != x));
-    } else if (type === "publishers") {
+    } else if (type === "publisher") {
       setPublisherPrefs(publisherPrefs.filter((p) => p != x));
     }
   }
@@ -54,7 +54,8 @@ function User({
           <SearchBar
             placeholder={"Enter your favorite podcasts..."}
             data={podcastData}
-            addItem={addPublisher}
+            addItem={addPodcast}
+            isAdvanced={isAdvanced}
             setPhrases={setPhrases}
           />
           <div className="tags">
@@ -73,6 +74,7 @@ function User({
             placeholder={"Enter your favorite genres..."}
             data={genreData}
             addItem={addGenre}
+            isAdvanced={isAdvanced}
             setPhrases={setPhrases}
           />
           <div className="tags">
@@ -90,7 +92,8 @@ function User({
           <SearchBar
             placeholder={"Enter your favorite publishers..."}
             data={pubData}
-            addItem={addPodcast}
+            addItem={addPublisher}
+            isAdvanced={isAdvanced}
             setPhrases={setPhrases}
           />
           <div className="tags">

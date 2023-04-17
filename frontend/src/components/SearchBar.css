@@ -50,17 +50,21 @@ input:focus {
 }
 
 .dataResult .dataItem {
-  width: 100%;
+  width: 300px;
   height: 50px;
   display: flex;
   align-items: center;
   color: black;
   border-color: white;
+  justify-content: center;
+  font-size: small;
 }
 
-.dataItem p {
+/* .dataItem p {
   margin-left: 10px;
-}
+  text-align: center;
+  display: flex
+} */
 
 a {
   text-decoration: none;
