@@ -51,7 +51,7 @@ function Likedislike({ podcast, recs, setRecs }) {
   function handleClickIrrelevant() {
     axios({
       method: "POST",
-      url: "http:localhost:5000/api/feedback/",
+      url: "http://4300showcase.infosci.cornell.edu:4546/api/feedback/",
       data: JSON.stringify({
         podcast: podcast["name"],
         relevant: false,
