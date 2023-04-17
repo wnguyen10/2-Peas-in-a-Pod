@@ -82,7 +82,7 @@ def get_publishers():
 
 @app.route("/api/podcasts/")
 def get_podcasts():
-    podcasts = [p.serialize() for p in Session.query(Podcast).all()]
+    podcasts = [p.simple_serialize() for p in Session.query(Podcast).all()]
 
     res = {"podcasts": podcasts}
     return success_response(res)

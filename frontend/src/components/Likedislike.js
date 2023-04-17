@@ -11,9 +11,23 @@ function Likedislike({ podcast, recs, setRecs }) {
 
   // renders the next podcast that's the most relevant
   function renderNextPodcast() {
-
-
-
+    // axios({
+    //   method: "GET",
+    //   url: "http://4300showcase.infosci.cornell.edu:4546/api/____",
+    // })
+    //   .then((response) => {
+    //     const res = response.data;
+    //     console.log("get the next most relevant match");
+    //     recs.push(res.podcast)
+    //     setRecs(recs);
+    //   })
+    //   .catch((error) => {
+    //     if (error.response) {
+    //       console.log(error.response);
+    //       console.log(error.response.status);
+    //       console.log(error.response.headers);
+    //     }
+    //   });
   }
 
   function handleClickRelevant() {
@@ -49,33 +63,33 @@ function Likedislike({ podcast, recs, setRecs }) {
   };
 
   function handleClickIrrelevant() {
-    axios({
-      method: "POST",
-      url: "http://4300showcase.infosci.cornell.edu:4546/api/feedback/",
-      data: JSON.stringify({
-        podcast: podcast["name"],
-        relevant: false,
-      }),
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        const res = response.data;
-        console.log("Clicked the dislike button");
-        console.log(res)
-      })
-      .catch((error) => {
-        if (error.response) {
-          console.log(error.response);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        }
-      });
+    // axios({
+    //   method: "POST",
+    //   url: "http://4300showcase.infosci.cornell.edu:4546/api/feedback/",
+    //   data: JSON.stringify({
+    //     podcast: podcast["name"],
+    //     relevant: false,
+    //   }),
+    //   headers: {
+    //     "Access-Control-Allow-Origin": "*",
+    //     "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+    //     "Content-Type": "application/json",
+    //   },
+    // })
+    //   .then((response) => {
+    //     const res = response.data;
+    //     console.log("Clicked the dislike button");
+    //     console.log(res)
+    //   })
+    //   .catch((error) => {
+    //     if (error.response) {
+    //       console.log(error.response);
+    //       console.log(error.response.status);
+    //       console.log(error.response.headers);
+    //     }
+    //   });
 
-    handlePodcastDelete();
+    // handlePodcastDelete();
 
   };
 
