@@ -1,30 +1,55 @@
 import React, { useState } from "react";
 import "./Likedislike.css";
+import axios from "axios";
 
-function Likedislike({ podcast }) {
-  // state = {
-  //   color: 'red'
-  // }
-  function handleClickRelevant() {
+function Likedislike({ podcast, recs, setRecs }) {
+
+  // deletes the podcast that user indicates strong dislike
+  function handlePodcastDelete() {
+    setRecs(recs.filter((p) => p != podcast))
+  }
+
+  // renders the next podcast that's the most relevant
+  function renderNextPodcast() {
     // axios({
-    //   method: "POST",
-    //   url: "http://4300showcase.infosci.cornell.edu:4546/api/feedback/",
-    //   // url: "api/recommendations",
-    //   data: JSON.stringify({
-    //     "user1": user1Publishers,
-    //     "user2": user2Publishers
-    //   }),
-    //   headers: {
-    //     'Access-Control-Allow-Origin': '*',
-    //     'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-    //     'Content-Type': 'application/json'
-    //   }
+    //   method: "GET",
+    //   url: "http://4300showcase.infosci.cornell.edu:4546/api/____",
     // })
     //   .then((response) => {
     //     const res = response.data;
-    //     console.log("fetched recs");
+    //     console.log("get the next most relevant match");
+    //     recs.push(res.podcast)
+    //     setRecs(recs);
+    //   })
+    //   .catch((error) => {
+    //     if (error.response) {
+    //       console.log(error.response);
+    //       console.log(error.response.status);
+    //       console.log(error.response.headers);
+    //     }
+    //   });
+  }
+
+  function handleClickRelevant() {
+    console.log(podcast)
+    console.log(podcast["name"])
+    // axios({
+    //   method: "POST",
+    //   url: "http://4300showcase.infosci.cornell.edu:4546/api/feedback/",
+    //   data: JSON.stringify({
+    //     podcast: podcast["name"],
+    //     relevant: true,
+    //   }),
+    //   headers: {
+    //     "Access-Control-Allow-Origin": "*",
+    //     "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+    //     "Content-Type": "application/json",
+    //   },
+    // })
+    //   .then((response) => {
+    //     const res = response.data;
+    //     console.log("Clicked like button");
     //     console.log(res)
-    //     setRecs(res.recommendations);
 
     //   })
     //   .catch((error) => {
@@ -35,13 +60,36 @@ function Likedislike({ podcast }) {
     //     }
     //   });
 
-
-
-
   };
 
   function handleClickIrrelevant() {
-    console.log(podcast)
+    // axios({
+    //   method: "POST",
+    //   url: "http://4300showcase.infosci.cornell.edu:4546/api/feedback/",
+    //   data: JSON.stringify({
+    //     podcast: podcast["name"],
+    //     relevant: false,
+    //   }),
+    //   headers: {
+    //     "Access-Control-Allow-Origin": "*",
+    //     "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+    //     "Content-Type": "application/json",
+    //   },
+    // })
+    //   .then((response) => {
+    //     const res = response.data;
+    //     console.log("Clicked the dislike button");
+    //     console.log(res)
+    //   })
+    //   .catch((error) => {
+    //     if (error.response) {
+    //       console.log(error.response);
+    //       console.log(error.response.status);
+    //       console.log(error.response.headers);
+    //     }
+    //   });
+
+    // handlePodcastDelete();
 
   };
 

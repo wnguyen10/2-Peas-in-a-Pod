@@ -203,9 +203,8 @@ function Home() {
               </div>
               <div className="column">
                 <div class="rating">
-                  <Likedislike podcast={podcast} />
+                  <Likedislike podcast={podcast} recs={recs} setRecs={setRecs} />
                 </div>
-
               </div>
             </div>
           })}
