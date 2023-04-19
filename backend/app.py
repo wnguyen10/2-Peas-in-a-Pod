@@ -120,8 +120,7 @@ def recommend_podcasts():
 @app.route("/api/feedback/", methods=["POST"])
 def recommend_podcasts_feedback():
     body = json.loads(request.data)
-    # TODO: frontend pls pass the current recs in the body of the http POST request
-    current_recs = []
+    current_recs = body["recs"]
 
     if body["relevant"]:
         add_to_relevant(body["podcast"])
