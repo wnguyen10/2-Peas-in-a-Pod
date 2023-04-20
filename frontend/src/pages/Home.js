@@ -147,7 +147,7 @@ function Home() {
       </div>
       <div>
         {" "}
-        <p> Input your favorite stations and find your perfect blend:</p>
+        <p> Let us find your perfect blend:</p>
       </div>
       <div className="Users">
         <User
