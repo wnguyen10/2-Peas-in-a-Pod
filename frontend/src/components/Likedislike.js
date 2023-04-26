@@ -15,7 +15,7 @@ function Likedislike({ podcast, recs, setRecs }) {
   function renderNextPodcast() {
     axios({
       method: "GET",
-      url: "http://4300showcase.infosci.cornell.edu:4546/api/feedback",
+      url: "http://4300showcase.infosci.cornell.edu:4546/api/feedback/",
     })
       .then((response) => {
         const res = response.data;
@@ -39,17 +39,12 @@ function Likedislike({ podcast, recs, setRecs }) {
     setIsIrrelevantActive(false);
     axios({
       method: "POST",
-      url: "http://4300showcase.infosci.cornell.edu:4546/api/feedback",
+      url: "http://4300showcase.infosci.cornell.edu:4546/api/feedback/",
       data: JSON.stringify({
         podcast: podcast["name"],
         relevant: true,
         recs: recs,
       }),
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-        "Content-Type": "application/json",
-      },
     })
       .then((response) => {
         const res = response.data;
@@ -79,11 +74,6 @@ function Likedislike({ podcast, recs, setRecs }) {
         relevant: false,
         recs: recs,
       }),
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-        "Content-Type": "application/json",
-      },
     })
       .then((response) => {
         const res = response.data;
@@ -100,11 +90,11 @@ function Likedislike({ podcast, recs, setRecs }) {
         }
       });
 
-    
+
 
   };
 
-  return(
+  return (
     <div className="rating">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
       <div className="like grow">
