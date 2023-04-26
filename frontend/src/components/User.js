@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import SearchBar from "./SearchBar";
 import "./User.css";
 import Tag from "./Tag";
+import Slider from "./Slider";
 
 function User({
   num,
@@ -15,6 +16,10 @@ function User({
   podcastPrefs,
   setPodcastPrefs,
   setPhrases,
+  min,
+  setMin,
+  max,
+  setMax,
   isAdvanced,
 }) {
   function addPublisher(pub) {
@@ -108,6 +113,14 @@ function User({
                 );
               })}
           </div>
+          <Slider
+            min={0}
+            max={60}
+            onChange={({ min, max }) => {
+              setMin(min);
+              setMax(max);
+            }}
+          />
         </>
       )}
       {!isAdvanced && (

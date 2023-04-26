@@ -5,7 +5,7 @@ import "./Home.css";
 import logo from "../data/logo.png";
 import axios from "axios";
 import Podcast from "../components/Podcast";
-import Likedislike from "../components/Likedislike"
+import Likedislike from "../components/Likedislike";
 import { FormControlLabel, Switch, ToggleButton } from "@mui/material";
 
 function Home() {
@@ -21,6 +21,10 @@ function Home() {
   const [user2Genres, setUser2Genres] = useState([]);
   const [user1Podcasts, setUser1Podcasts] = useState([]);
   const [user2Podcasts, setUser2Podcasts] = useState([]);
+  const [user1min, setUser1Min] = useState(0);
+  const [user1max, setUser1Max] = useState(0);
+  const [user2min, setUser2Min] = useState(0);
+  const [user2max, setUser2Max] = useState(0);
 
   const [user1Phrases, setUser1Phrases] = useState([]);
   const [user2Phrases, setUser2Phrases] = useState([]);
@@ -161,6 +165,10 @@ function Home() {
           podcastData={podcastData}
           podcastPrefs={user1Podcasts}
           setPodcastPrefs={setUser1Podcasts}
+          min={user1min}
+          setMin={setUser1Min}
+          max={user1max}
+          setMax={setUser1Max}
           setPhrases={setUser1Phrases}
           isAdvanced={advancedSearch}
         />
@@ -175,6 +183,10 @@ function Home() {
           podcastData={podcastData}
           podcastPrefs={user2Podcasts}
           setPodcastPrefs={setUser2Podcasts}
+          min={user2min}
+          setMin={setUser2Min}
+          max={user2max}
+          setMax={setUser2Max}
           setPhrases={setUser2Phrases}
           isAdvanced={advancedSearch}
         />
@@ -195,19 +207,20 @@ function Home() {
         {typeof recs !== undefined &&
           recs.length !== 0 &&
           recs.map((podcast, key) => {
-            return <div className="recommendations">
-              <div className="column">
-                <div className="result" key={key}>
-                  <Podcast podcast={podcast} num={key + 1} />
+            return (
+              <div className="recommendations">
+                <div className="column">
+                  <div className="result" key={key}>
+                    <Podcast podcast={podcast} num={key + 1} />
+                  </div>
+                </div>
+                <div className="column">
+                  <div class="rating">
+                    <Likedislike podcast={podcast} />
+                  </div>
                 </div>
               </div>
-              <div className="column">
-                <div class="rating">
-                  <Likedislike podcast={podcast} />
-                </div>
-
-              </div>
-            </div>
+            );
           })}
       </div>
     </div>
