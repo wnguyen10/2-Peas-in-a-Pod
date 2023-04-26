@@ -125,7 +125,7 @@ function User({
       )}
       {!isAdvanced && (
         <SearchBar
-          placeholder={"Enter a phrase..."}
+          placeholder={"Enter a phrase... Ex: baseball"}
           pubData={pubData}
           addPublisher={addPublisher}
           isAdvanced={isAdvanced}

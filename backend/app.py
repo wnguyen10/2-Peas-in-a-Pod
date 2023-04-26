@@ -82,7 +82,7 @@ def get_publishers():
 
 @app.route("/api/podcasts/")
 def get_podcasts():
-    podcasts = [p.serialize() for p in Session.query(Podcast).all()]
+    podcasts = [p.simple_serialize() for p in Session.query(Podcast).all()]
 
     res = {"podcasts": podcasts}
     return success_response(res)
@@ -120,13 +120,14 @@ def recommend_podcasts():
 @app.route("/api/feedback/", methods=["POST"])
 def recommend_podcasts_feedback():
     body = json.loads(request.data)
+    current_recs = body["recs"]
 
     if body["relevant"]:
         add_to_relevant(body["podcast"])
     else:
         add_to_irrelevant(body["podcast"])
 
-    results = rocchio(pref1, pref2)
+    results = rocchio(pref1, pref2, current_recs)
 
     resp = []
     for r in results:

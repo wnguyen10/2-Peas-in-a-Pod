@@ -151,7 +151,7 @@ function Home() {
       </div>
       <div>
         {" "}
-        <p> Input your favorite stations and find your perfect blend:</p>
+        <p> Let us find your perfect blend:</p>
       </div>
       <div className="Users">
         <User
@@ -216,7 +216,11 @@ function Home() {
                 </div>
                 <div className="column">
                   <div class="rating">
-                    <Likedislike podcast={podcast} />
+                    <Likedislike
+                      podcast={podcast}
+                      recs={recs}
+                      setRecs={setRecs}
+                    />
                   </div>
                 </div>
               </div>
