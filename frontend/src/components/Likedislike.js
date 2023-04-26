@@ -3,6 +3,8 @@ import "./Likedislike.css";
 import axios from "axios";
 
 function Likedislike({ podcast, recs, setRecs }) {
+  const [isRelevantActive, setIsRelevantActive] = useState(false);
+  const [isIrrelevantActive, setIsIrrelevantActive] = useState(false);
 
   // deletes the podcast that user indicates strong dislike
   function handlePodcastDelete() {
@@ -33,6 +35,8 @@ function Likedislike({ podcast, recs, setRecs }) {
   function handleClickRelevant() {
     // console.log(podcast)
     // console.log(podcast["name"])
+    setIsRelevantActive(true);
+    setIsIrrelevantActive(false);
     axios({
       method: "POST",
       url: "http://4300showcase.infosci.cornell.edu:4546/api/feedback",
@@ -64,6 +68,8 @@ function Likedislike({ podcast, recs, setRecs }) {
   };
 
   function handleClickIrrelevant() {
+    setIsRelevantActive(false);
+    setIsIrrelevantActive(true);
     //handlePodcastDelete();
     axios({
       method: "POST",
@@ -98,15 +104,14 @@ function Likedislike({ podcast, recs, setRecs }) {
 
   };
 
-  return (
-
-    <div class="rating">
+  return(
+    <div className="rating">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
-      <div class="like grow" >
-        <i class="fa fa-thumbs-up fa-3x like" aria-hidden="true" onClick={handleClickRelevant}></i>
+      <div className="like grow">
+        <i className={`fa fa-thumbs-up fa-3x like ${isRelevantActive ? 'active' : ''}`} aria-hidden="true" onClick={handleClickRelevant}></i>
       </div>
-      <div class="dislike grow">
-        <i class="fa fa-thumbs-down fa-3x like" aria-hidden="true" onClick={handleClickIrrelevant}></i>
+      <div className="dislike grow">
+        <i className={`fa fa-thumbs-down fa-3x dislike ${isIrrelevantActive ? 'active' : ''}`} aria-hidden="true" onClick={handleClickIrrelevant}></i>
       </div>
     </div>
   )
