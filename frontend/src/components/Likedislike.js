@@ -45,6 +45,9 @@ function Likedislike({ podcast, recs, setRecs }) {
         relevant: true,
         recs: recs,
       }),
+      headers: {
+        "Content-Type": "application/json"
+      }
     })
       .then((response) => {
         const res = response.data;
@@ -68,12 +71,15 @@ function Likedislike({ podcast, recs, setRecs }) {
     //handlePodcastDelete();
     axios({
       method: "POST",
-      url: "http://4300showcase.infosci.cornell.edu:4546/api/feedback",
+      url: "http://4300showcase.infosci.cornell.edu:4546/api/feedback/",
       data: JSON.stringify({
         podcast: podcast["name"],
         relevant: false,
         recs: recs,
       }),
+      headers: {
+        "Content-Type": "application/json"
+      }
     })
       .then((response) => {
         const res = response.data;
