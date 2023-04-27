@@ -99,6 +99,7 @@ function Home() {
   }
 
   function getMatches() {
+    setIsRelevantActive([false, false, false, false, false, false, false, false, false, false])
     axios({
       method: "POST",
       url: "http://4300showcase.infosci.cornell.edu:4546/api/recommendations/",
