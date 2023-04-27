@@ -29,6 +29,12 @@ function Home() {
   const [user1Phrases, setUser1Phrases] = useState([]);
   const [user2Phrases, setUser2Phrases] = useState([]);
 
+  const [isRelevantActive, setIsRelevantActive] = useState([false, false, false, false, false, false, false, false, false, false]);
+  const [isIrrelevantActive, setIsIrrelevantActive] = useState([false, false, false, false, false, false, false, false, false, false]);
+
+
+
+
   useEffect(() => {
     getPublishers();
     getPodcasts();
@@ -220,6 +226,11 @@ function Home() {
                       podcast={podcast}
                       recs={recs}
                       setRecs={setRecs}
+                      num={key}
+                      isRelevantActive={isRelevantActive}
+                      setIsRelevantActive={setIsRelevantActive}
+                      isIrrelevantActive={isIrrelevantActive}
+                      setIsIrrelevantActive={setIsIrrelevantActive}
                     />
                   </div>
                 </div>
