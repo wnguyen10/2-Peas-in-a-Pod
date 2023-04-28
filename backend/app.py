@@ -27,9 +27,6 @@ CORS(app)
 
 # Response Formats
 
-pref1 = {}
-pref2 = {}
-
 def success_response(data, code=200):
     return json.dumps(data), code
 
@@ -69,9 +66,6 @@ def get_genres():
 
 @app.route("/api/recommendations/", methods=["POST"])
 def recommend_podcasts():
-    global pref1
-    global pref2 
-
     body = json.loads(request.data)
     pref1 = body.get("user1")
     pref2 = body.get("user2")
@@ -90,11 +84,10 @@ def recommend_podcasts():
 
 @app.route("/api/feedback/", methods=["POST"])
 def recommend_podcasts_feedback():
-    global pref1
-    global pref2
-
     body = json.loads(request.data)
     current_recs = body["recs"]
+    pref1 = body["user1"]
+    pref2 = body["user2"]
 
     if body["relevant"]:
         add_to_relevant(body["podcast"])
