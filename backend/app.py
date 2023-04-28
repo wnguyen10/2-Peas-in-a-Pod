@@ -42,35 +42,6 @@ def failure_response(message, code=404):
 def home():
     return render_template('base.html', title="sample html")
 
-# TEST ENDPOINTS
-
-
-@app.route("/api/podcasts/", methods=["POST"])
-def create_podcast():
-    body = json.loads(request.data)
-
-    name = body.get("name")
-    publisher = body.get("publisher")
-    description = body.get("description")
-    duration = body.get("duration")
-    timestamp = body.get("timestamp")
-
-    podcast = Podcast(name=name, publisher_id=publisher,
-                      description=description, duration=duration, timestamp=timestamp)
-    Session.add(podcast)
-    Session.commit()
-    return success_response(podcast.serialize(), 201)
-
-
-@app.route("/api/podcasts/<int:id>/", methods=["DELETE"])
-def delete_podcast(id):
-    podcast = Session.query(Podcast).filter_by(id=id).first()
-    if podcast is not None:
-        Session.delete(podcast)
-        Session.commit()
-        return success_response(podcast.serialize())
-    return failure_response("Invalid Podcast ID")
-
 # API ENDPOINTS
 
 
@@ -104,7 +75,7 @@ def recommend_podcasts():
     body = json.loads(request.data)
     pref1 = body.get("user1")
     pref2 = body.get("user2")
-
+    
     results = get_top_k_recommendations(pref1, pref2)
 
     resp = []
@@ -119,6 +90,9 @@ def recommend_podcasts():
 
 @app.route("/api/feedback/", methods=["POST"])
 def recommend_podcasts_feedback():
+    global pref1
+    global pref2
+
     body = json.loads(request.data)
     current_recs = body["recs"]
 
