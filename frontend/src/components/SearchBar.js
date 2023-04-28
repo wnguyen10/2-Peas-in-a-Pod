@@ -13,14 +13,12 @@ function SearchBar({ placeholder, data, addItem, setPhrases, isAdvanced }) {
     setWordEntered(searchWord);
 
     if (isAdvanced) {
-      const newFilter = data.filter((value) => {
-        return value.name.toLowerCase().includes(searchWord.toLowerCase());
-      });
-
+      const newFilter = data.filter((value) => value.name.toLowerCase().startsWith(searchWord.toLowerCase()));
       if (searchWord === "") {
         setFilteredData([]);
       } else {
         setFilteredData(newFilter);
+        console.log(newFilter)
       }
     } else {
       setPhrases([event.target.value]);

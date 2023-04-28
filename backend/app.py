@@ -27,9 +27,6 @@ CORS(app)
 
 # Response Formats
 
-pref1 = {}
-pref2 = {}
-
 def success_response(data, code=200):
     return json.dumps(data), code
 
@@ -41,35 +38,6 @@ def failure_response(message, code=404):
 @app.route("/")
 def home():
     return render_template('base.html', title="sample html")
-
-# TEST ENDPOINTS
-
-
-@app.route("/api/podcasts/", methods=["POST"])
-def create_podcast():
-    body = json.loads(request.data)
-
-    name = body.get("name")
-    publisher = body.get("publisher")
-    description = body.get("description")
-    duration = body.get("duration")
-    timestamp = body.get("timestamp")
-
-    podcast = Podcast(name=name, publisher_id=publisher,
-                      description=description, duration=duration, timestamp=timestamp)
-    Session.add(podcast)
-    Session.commit()
-    return success_response(podcast.serialize(), 201)
-
-
-@app.route("/api/podcasts/<int:id>/", methods=["DELETE"])
-def delete_podcast(id):
-    podcast = Session.query(Podcast).filter_by(id=id).first()
-    if podcast is not None:
-        Session.delete(podcast)
-        Session.commit()
-        return success_response(podcast.serialize())
-    return failure_response("Invalid Podcast ID")
 
 # API ENDPOINTS
 
@@ -98,9 +66,6 @@ def get_genres():
 
 @app.route("/api/recommendations/", methods=["POST"])
 def recommend_podcasts():
-    global pref1
-    global pref2 
-
     body = json.loads(request.data)
     pref1 = body.get("user1")
     pref2 = body.get("user2")
@@ -121,6 +86,8 @@ def recommend_podcasts():
 def recommend_podcasts_feedback():
     body = json.loads(request.data)
     current_recs = body["recs"]
+    pref1 = body["user1"]
+    pref2 = body["user2"]
 
     if body["relevant"]:
         add_to_relevant(body["podcast"])
