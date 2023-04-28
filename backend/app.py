@@ -75,7 +75,7 @@ def recommend_podcasts():
     body = json.loads(request.data)
     pref1 = body.get("user1")
     pref2 = body.get("user2")
-    
+
     results = get_top_k_recommendations(pref1, pref2)
 
     resp = []
