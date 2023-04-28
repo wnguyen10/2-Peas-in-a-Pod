@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import pickle
 from sklearn.preprocessing import normalize
+from nltk.stem.porter import *
 
 df = pd.read_csv("./data/trunc_metadata.csv")
 
@@ -22,6 +23,7 @@ words_compressed = words_compressed.transpose()
 words_compressed_normed = normalize(words_compressed, axis=1)
 docs_compressed_normed = normalize(docs_compressed)
 
+stemmer = PorterStemmer()
 
 def get_genre_tfidf(pref_list):
     """
@@ -62,23 +64,18 @@ def get_publisher_tfidf(pref_list):
 
 
 def get_phrase_tfidf(pref_list):
-    """
-    Params:
-    {
-        pref_list: string list of individual one's preferred phrases, where each phrase is a string of words (i.e. "basketball player")
-    }
-
-    Returns: a tf-idf vector representing the individual's total phrase preferences
-    """
     tf_idf_vec = np.zeros(docs_compressed_normed.shape[1])
-
+    
     for phrase in pref_list:
-
+        
         # Use V matrix from SVD to represent query in words_compressed_normed space
-        phrase_tfidf = tfidf_vec.transform([phrase]).toarray()
-        phrase_vec = phrase_tfidf.dot(words_compressed).T.squeeze()
-        tf_idf_vec += phrase_vec
-
+        words = phrase.split(" ")
+        stemmed_words = [stemmer.stem(word) for word in words]
+        query = ' '.join(stemmed_words)
+        query_tfidf = tfidf_vec.transform([query]).toarray()
+        query_vec = normalize(np.dot(query_tfidf, words_compressed)).squeeze()
+        tf_idf_vec += query_vec
+        
     return tf_idf_vec / len(pref_list)
 
 
