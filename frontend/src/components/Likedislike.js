@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./Likedislike.css";
 import axios from "axios";
 
-function Likedislike({ podcast, recs, setRecs, num, isRelevantActive, setIsRelevantActive, isIrrelevantActive, setIsIrrelevantActive }) {
+function Likedislike({ user1, user2, podcast, recs, setRecs, num, isRelevantActive, setIsRelevantActive, isIrrelevantActive, setIsIrrelevantActive }) {
   const [isRelevantActive1, setIsRelevantActive1] = useState(false);
   const [isIrrelevantActive1, setIsIrrelevantActive1] = useState(false);
 
@@ -20,6 +20,8 @@ function Likedislike({ podcast, recs, setRecs, num, isRelevantActive, setIsRelev
         podcast: podcast["name"],
         relevant: true,
         recs: recs,
+        user1: user1,
+        user2: user2,
       }),
       headers: {
         "Content-Type": "application/json"
@@ -51,6 +53,8 @@ function Likedislike({ podcast, recs, setRecs, num, isRelevantActive, setIsRelev
         podcast: podcast["name"],
         relevant: false,
         recs: recs,
+        user1: user1,
+        user2: user2,
       }),
       headers: {
         "Content-Type": "application/json"

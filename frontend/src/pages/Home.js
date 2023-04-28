@@ -224,6 +224,18 @@ function Home() {
                 <div className="column">
                   <div class="rating">
                     <Likedislike
+                      user1={{
+                        genres: user1Genres,
+                        publishers: user1Publishers,
+                        phrases: user1Phrases,
+                        podcasts: user1Podcasts,
+                      }}
+                      user2={{
+                        genres: user2Genres,
+                        publishers: user2Publishers,
+                        phrases: user2Phrases,
+                        podcasts: user2Podcasts,
+                      }}
                       podcast={podcast}
                       recs={recs}
                       setRecs={setRecs}
