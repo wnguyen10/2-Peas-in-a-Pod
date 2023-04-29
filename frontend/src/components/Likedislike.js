@@ -31,7 +31,7 @@ function Likedislike({ user1, user2, podcast, recs, setRecs, num, isRelevantActi
         const res = response.data;
         console.log("Clicked like button");
         console.log(res)
-
+        setRecs(res);
       })
       .catch((error) => {
         if (error.response) {

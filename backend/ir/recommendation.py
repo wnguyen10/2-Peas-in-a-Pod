@@ -205,7 +205,7 @@ def get_top_k_recommendations(indiv_one_pref, indiv_two_pref, k=10):
     return top_matches
 
 
-def get_top_k_recs_given_query(query, current_recs, k=10):
+def get_top_k_recs_given_query(query, k=10):
     """
     Params:
     {
@@ -221,8 +221,6 @@ def get_top_k_recs_given_query(query, current_recs, k=10):
     top_matches = []
 
     for i in range(k):
-        while show_index_to_name[sorted_idx[i]] in current_recs:
-            i = i+1
         top_matches.append(
             (show_index_to_name[sorted_idx[i]], similarities[sorted_idx[i]]))
 

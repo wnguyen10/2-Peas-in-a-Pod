@@ -89,21 +89,35 @@ def recommend_podcasts_feedback():
     pref1 = body["user1"]
     pref2 = body["user2"]
 
+    current_recs_dict = {}
+    res = []
+
     if body["relevant"]:
         add_to_relevant(body["podcast"])
     else:
         add_to_irrelevant(body["podcast"])
 
-    results = rocchio(pref1, pref2, current_recs)
+    for i in range(len(current_recs)):
+        if current_recs[i]["name"] == body["podcast"] and not body["relevant"]:
+            continue
+        else:
+            res.append(current_recs[i])
+            current_recs_dict[current_recs[i]["name"]] = i
 
-    resp = []
+    results = rocchio(pref1, pref2)
     for r in results:
         podcast = Session.query(Podcast).filter_by(
             name=r[0]).first().serialize()
         podcast["score"] = r[1]
-        resp.append(podcast)
+        # Update podcast score if it exists in existing recommendations
+        if podcast["name"] in current_recs_dict:
+            i = current_recs_dict[podcast["name"]] 
+            res[i]["score"] = podcast["score"]
+        elif len(res) < 10:
+            # Add new podcast to recommendations if less than 10 results
+            res.append(podcast)
     
-    return success_response(resp)
+    return success_response(sorted(res, key=lambda p: p["score"], reverse=True))
 
 
 @app.teardown_request

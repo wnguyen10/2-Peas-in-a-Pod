@@ -13,8 +13,8 @@ def add_to_irrelevant(podcast):
     irrelevant.append(podcast)
 
 
-def rocchio(user1_pref, user2_pref, current_recs, relevant=relevant, irrelevant=irrelevant, input_doc_matrix=docs_compressed_normed,
-            show_name_to_index=show_name_to_index, a=1, b=0.5, c=0.2):
+def rocchio(user1_pref, user2_pref, relevant=relevant, irrelevant=irrelevant, input_doc_matrix=docs_compressed_normed,
+            show_name_to_index=show_name_to_index, a=1, b=0.8, c=0.2):
     """ 
     Params: {user1_pref: Dict,
             user2_pref: Dict, 
@@ -53,13 +53,13 @@ def rocchio(user1_pref, user2_pref, current_recs, relevant=relevant, irrelevant=
         irrelevant_vector = (c/len(irrelevant)) * irrelevant_vector
 
     for i in range(len(new_query)):
-        new_query[i] = original_query[i] + \
+        new_query[i] = a * original_query[i] + \
             relevant_vector[i] - irrelevant_vector[i]
 
     for i in range(len(new_query)):
         if new_query[i] < 0:
             new_query[i] = 0
 
-    new_recommendations = get_top_k_recs_given_query(new_query, current_recs)
+    new_recommendations = get_top_k_recs_given_query(new_query)
 
     return new_recommendations

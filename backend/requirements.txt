@@ -19,6 +19,7 @@ pycparser==2.21
 PyMySQL==1.0.2
 python-dateutil==2.8.2
 pytz==2023.2
+regex==2023.3.23
 scikit-learn==1.0.2
 scipy==1.7.3
 six==1.16.0
