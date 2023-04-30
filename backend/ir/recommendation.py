@@ -12,11 +12,13 @@ tfidf_vec = pickle.load(open("./data/tfidf.p", "rb"))
 genre_tf_idf = pickle.load(open("./data/genre_tf_idf_dict.p", "rb"))
 publisher_tf_idf = pickle.load(open("./data/publisher_tf_idf_dict.p", "rb"))
 
-shows = df.set_index('show_name').to_dict('index')
+shows = df.set_index("show_name").to_dict("index")
 
 # Create lookup dictionaries
-show_name_to_index = {show_name: index for index,
-                      show_name in enumerate([show_name for show_name in shows])}
+show_name_to_index = {
+    show_name: index
+    for index, show_name in enumerate([show_name for show_name in shows])
+}
 show_index_to_name = {v: k for k, v in show_name_to_index.items()}
 
 words_compressed = words_compressed.transpose()
@@ -24,6 +26,7 @@ words_compressed_normed = normalize(words_compressed, axis=1)
 docs_compressed_normed = normalize(docs_compressed)
 
 stemmer = PorterStemmer()
+
 
 def get_genre_tfidf(pref_list):
     """
@@ -65,17 +68,16 @@ def get_publisher_tfidf(pref_list):
 
 def get_phrase_tfidf(pref_list):
     tf_idf_vec = np.zeros(docs_compressed_normed.shape[1])
-    
+
     for phrase in pref_list:
-        
         # Use V matrix from SVD to represent query in words_compressed_normed space
         words = phrase.split(" ")
         stemmed_words = [stemmer.stem(word) for word in words]
-        query = ' '.join(stemmed_words)
+        query = " ".join(stemmed_words)
         query_tfidf = tfidf_vec.transform([query]).toarray()
         query_vec = normalize(np.dot(query_tfidf, words_compressed)).squeeze()
         tf_idf_vec += query_vec
-        
+
     return tf_idf_vec / len(pref_list)
 
 
@@ -165,19 +167,66 @@ def get_total_tfidf(genres, publishers, phrases, podcasts):
     return tf_idf_vec / categories_considered
 
 
+def get_top_k_filtered_recs_given_query(
+    query, indiv_one_duration, indiv_two_duration, k
+):
+    """
+    Params:
+    {
+        query: TF-IDF vector representing a query (shape of (40, ))
+        indiv_one_duration: int list formatted as [min_duration, max_duration] for user duration preference
+        indiv_two_duration: same as above
+        k: number of recommendations returned (default = 10)
+    }
+
+    Returns: a list of k sorted tuples in format (podcast name, cosine similarity). If durations have no overlap, returns [].
+    """
+
+    # Find overlap of both user durations
+    min_duration = max(indiv_one_duration[0], indiv_two_duration[0])
+    max_duration = min(indiv_one_duration[1], indiv_two_duration[1])
+
+    # If max_duration is 60, user is okay with any length greater than 60 as well
+    if max_duration == 60:
+        max_duration = float("inf")
+
+    # Find indices of podcasts that satisfy duration constraints
+    filtered_df = df[
+        (df["avg_duration"] >= min_duration) & (df["avg_duration"] <= max_duration)
+    ]
+    valid_idx = filtered_df.index.tolist()
+
+    # Only calculate similarity for podcasts satisfying duration constraints
+    valid_docs = docs_compressed_normed[valid_idx, :]
+    similarities = valid_docs.dot(query)
+    sorted_idx = np.argsort(similarities)[::-1]
+
+    top_matches = []
+    num_iterations = min(k, len(sorted_idx))
+
+    for i in range(num_iterations):
+        podcast_idx = valid_idx[sorted_idx[i]]
+        top_matches.append(
+            (show_index_to_name[podcast_idx], similarities[sorted_idx[i]])
+        )
+
+    return top_matches
+
+
 def get_top_k_recommendations(indiv_one_pref, indiv_two_pref, k=10):
     """
     Params:
     {
         indiv_one_pref: preference dictionary for individual one, formatted as such:
 
-            indiv_one_pref = 
+            indiv_one_pref =
             {
-                "genres": [],
-                "publishers": [],
-                "phrases": []
-                "podcasts": []
-            }, where each list is a string list of the individual's specific preferences
+                "genres": [] (string list),
+                "publishers": [] (string list),
+                "phrases": [] (string list),
+                "podcasts": [] (string list),
+                "duration": [min_duration, max_duration] (int list)
+            },
 
         indiv_two_pref: preference dictionary for individual two, formatted exactly as indiv_one_pref
         k: number of recommendations returned (default = 10)
@@ -185,43 +234,24 @@ def get_top_k_recommendations(indiv_one_pref, indiv_two_pref, k=10):
 
     Requires: For each string in the individual preference dictionaries in genres, publishers, and podcasts, the preference must exist in the trunc_metadata.csv table
 
-    Returns: a list of k sorted tuples in format (podcast name, cosine similarity) 
+    Returns: a list of k sorted tuples in format (podcast name, cosine similarity). If durations have no overlap, returns [].
     """
     indiv_one_tfidf = get_total_tfidf(
-        indiv_one_pref["genres"], indiv_one_pref["publishers"], indiv_one_pref["phrases"], indiv_one_pref["podcasts"])
+        indiv_one_pref["genres"],
+        indiv_one_pref["publishers"],
+        indiv_one_pref["phrases"],
+        indiv_one_pref["podcasts"],
+    )
     indiv_two_tfidf = get_total_tfidf(
-        indiv_two_pref["genres"], indiv_two_pref["publishers"], indiv_two_pref["phrases"], indiv_two_pref["podcasts"])
+        indiv_two_pref["genres"],
+        indiv_two_pref["publishers"],
+        indiv_two_pref["phrases"],
+        indiv_two_pref["podcasts"],
+    )
 
+    # TF-IDF vector representing combined user preferences
     avg_tfidf = (indiv_one_tfidf + indiv_two_tfidf) / 2
 
-    similarities = docs_compressed_normed.dot(avg_tfidf)
-    sorted_idx = np.argsort(similarities)[::-1]
-
-    top_matches = []
-    for i in range(k):
-        top_matches.append(
-            (show_index_to_name[sorted_idx[i]], similarities[sorted_idx[i]]))
-
-    return top_matches
-
-
-def get_top_k_recs_given_query(query, k=10):
-    """
-    Params:
-    {
-        query: TF-IDF vector representing a query (shape of (40, ))
-        k: number of recommendations returned (default = 10)
-    }
-
-    Returns: a list of k sorted tuples in format (podcast name, cosine similarity) 
-    """
-    similarities = docs_compressed_normed.dot(query)
-    sorted_idx = np.argsort(similarities)[::-1]
-
-    top_matches = []
-
-    for i in range(k):
-        top_matches.append(
-            (show_index_to_name[sorted_idx[i]], similarities[sorted_idx[i]]))
-
-    return top_matches
+    return get_top_k_filtered_recs_given_query(
+        avg_tfidf, indiv_one_pref["duration"], indiv_two_pref["duration"], k
+    )
