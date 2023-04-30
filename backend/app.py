@@ -2,7 +2,8 @@ import json
 import os
 from flask import Flask, render_template, request
 from flask_cors import CORS
-from config import Base, Session, mysql_engine
+
+from config import Session, mysql_engine
 from db import Podcast, Publisher, Category
 from ir.recommendation import get_top_k_recommendations
 from ir.rocchio import rocchio, add_to_irrelevant, add_to_relevant
@@ -91,6 +92,7 @@ def recommend_podcasts_feedback():
 
     current_recs_dict = {}
     res = []
+    res_i = 0
 
     if body["relevant"]:
         add_to_relevant(body["podcast"])
@@ -102,19 +104,19 @@ def recommend_podcasts_feedback():
             continue
         else:
             res.append(current_recs[i])
-            current_recs_dict[current_recs[i]["name"]] = i
+            current_recs_dict[current_recs[i]["name"]] = res_i
+            res_i += 1
 
     results = rocchio(pref1, pref2)
     for r in results:
-        podcast = Session.query(Podcast).filter_by(
-            name=r[0]).first().serialize()
-        podcast["score"] = r[1]
         # Update podcast score if it exists in existing recommendations
-        if podcast["name"] in current_recs_dict:
-            i = current_recs_dict[podcast["name"]] 
-            res[i]["score"] = podcast["score"]
+        if r[0] in current_recs_dict:
+            i = current_recs_dict[r[0]] 
+            res[i]["score"] = r[1]
         elif len(res) < 10:
             # Add new podcast to recommendations if less than 10 results
+            podcast = Session.query(Podcast).filter_by(name=r[0]).first().serialize()
+            podcast["score"] = r[1]
             res.append(podcast)
     
     return success_response(sorted(res, key=lambda p: p["score"], reverse=True))
