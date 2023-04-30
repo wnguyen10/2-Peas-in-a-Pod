@@ -168,7 +168,7 @@ def get_total_tfidf(genres, publishers, phrases, podcasts):
 
 
 def get_top_k_filtered_recs_given_query(
-    query, indiv_one_duration, indiv_two_duration, k
+    query, indiv_one_duration, indiv_two_duration, k=10
 ):
     """
     Params:
