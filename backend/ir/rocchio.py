@@ -1,5 +1,5 @@
 import numpy as np
-from ir.recommendation import get_total_tfidf, show_name_to_index, docs_compressed_normed, get_top_k_recs_given_query
+from ir.recommendation import get_total_tfidf, show_name_to_index, docs_compressed_normed, get_top_k_filtered_recs_given_query
 
 relevant = []
 irrelevant = []
@@ -60,6 +60,6 @@ def rocchio(user1_pref, user2_pref, relevant=relevant, irrelevant=irrelevant, in
         if new_query[i] < 0:
             new_query[i] = 0
 
-    new_recommendations = get_top_k_recs_given_query(new_query)
+    new_recommendations = get_top_k_filtered_recs_given_query(new_query, user1_pref["duration"], user2_pref["duration"])
 
     return new_recommendations
