@@ -205,10 +205,10 @@ def get_top_k_filtered_recs_given_query(
     num_iterations = min(k, len(sorted_idx))
 
     for i in range(num_iterations):
-        podcast_idx = valid_idx[sorted_idx[i]]
-        top_matches.append(
-            (show_index_to_name[podcast_idx], similarities[sorted_idx[i]])
-        )
+        similarity_score = similarities[sorted_idx[i]]
+        if similarity_score != 0:
+            podcast_idx = valid_idx[sorted_idx[i]]
+            top_matches.append((show_index_to_name[podcast_idx], similarity_score))
 
     return top_matches
 
