@@ -31,8 +31,14 @@
 
 .podcast-score {
   font-size: small;
+  margin-top: 7pt;
 }
 
 .podcast-pub {
   font-style: italic;
+}
+
+.podcast-length {
+  font-size: small;
+  
 }

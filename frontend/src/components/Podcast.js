@@ -10,6 +10,9 @@ function Podcast({ podcast, num }) {
       </div>
       <div className="podcast-pub">{podcast.publisher.name}</div>
       <div className="podcast-desc">{podcast.description}</div>
+      <div className="podcast-length">
+        Average length: {podcast.duration} mins
+      </div>
       <div className="podcast-score">{confidence + "% Match"}</div>
     </div>
   );

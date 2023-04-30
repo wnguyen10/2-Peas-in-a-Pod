@@ -19,6 +19,7 @@
   justify-content: center;
   flex-direction: column;
   font-family: "SFProBOLD";
+  width: 100vw;
 }
 
 .Title {
@@ -104,10 +105,23 @@ button:hover {
 
 .result {
   width: 800px;
+  margin-left: 150px;
 }
 
 .rating {
   display: inline-block;
   width: 100%;
   text-align: center;
+}
+
+.disclaimer {
+  font-size: small;
+  max-width: 1000px;
+  font-family: "SFPro";
+  font-style: italic;
+}
+
+.no-results {
+  padding: 10pt;
+  margin-bottom: 30pt;
 }

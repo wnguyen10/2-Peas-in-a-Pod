@@ -11,6 +11,7 @@ import { FormControlLabel, Switch, ToggleButton } from "@mui/material";
 function Home() {
   const [recs, setRecs] = useState([]);
   const [advancedSearch, setAdvancedSearch] = useState(false);
+  const [fetched, setFetched] = useState(false);
 
   const [pubData, setPubData] = useState([]);
   const [genreData, setGenreData] = useState([]);
@@ -29,11 +30,30 @@ function Home() {
   const [user1Phrases, setUser1Phrases] = useState([]);
   const [user2Phrases, setUser2Phrases] = useState([]);
 
-  const [isRelevantActive, setIsRelevantActive] = useState([false, false, false, false, false, false, false, false, false, false]);
-  const [isIrrelevantActive, setIsIrrelevantActive] = useState([false, false, false, false, false, false, false, false, false, false]);
-
-
-
+  const [isRelevantActive, setIsRelevantActive] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
+  const [isIrrelevantActive, setIsIrrelevantActive] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
 
   useEffect(() => {
     getPublishers();
@@ -99,7 +119,18 @@ function Home() {
   }
 
   function getMatches() {
-    setIsRelevantActive([false, false, false, false, false, false, false, false, false, false])
+    setIsRelevantActive([
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+    ]);
     axios({
       method: "POST",
       url: "http://4300showcase.infosci.cornell.edu:4546/api/recommendations/",
@@ -109,12 +140,14 @@ function Home() {
           publishers: user1Publishers,
           phrases: user1Phrases,
           podcasts: user1Podcasts,
+          duration: [user1min, user1max],
         },
         user2: {
           genres: user2Genres,
           publishers: user2Publishers,
           phrases: user2Phrases,
           podcasts: user2Podcasts,
+          duration: [user2min, user2max],
         },
       }),
       headers: {
@@ -128,6 +161,7 @@ function Home() {
         console.log("fetched recs");
         console.log(res);
         setRecs(res.recommendations);
+        setFetched(true);
       })
       .catch((error) => {
         if (error.response) {
@@ -148,6 +182,7 @@ function Home() {
     setUser2Podcasts([]);
     setUser1Phrases([]);
     setUser2Phrases([]);
+    setFetched(false);
   }
 
   return (
@@ -210,6 +245,20 @@ function Home() {
           Find Matches!
         </button>
       </div>
+
+      {typeof recs !== undefined && recs.length !== 0 && (
+        <div className="disclaimer">
+          <p>
+            NOTE: The displayed percentage is based on the cosine similarity of
+            the averaged user inputs and the transcripts of the recommended
+            podcasts. To represent the combined user inputs, we generate a
+            term-frequency vector representing both user’s inputted preferences,
+            which is further condensed into a lower-dimensional space by
+            singular value decomposition.
+          </p>
+        </div>
+      )}
+
       <div>
         {typeof recs !== undefined &&
           recs.length !== 0 &&
@@ -250,6 +299,9 @@ function Home() {
               </div>
             );
           })}
+        {fetched && recs.length === 0 && (
+          <div className="no-results">No results</div>
+        )}
       </div>
     </div>
   );
