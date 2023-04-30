@@ -91,6 +91,7 @@ def recommend_podcasts_feedback():
 
     current_recs_dict = {}
     res = []
+    res_i = 0
 
     if body["relevant"]:
         add_to_relevant(body["podcast"])
@@ -103,6 +104,7 @@ def recommend_podcasts_feedback():
         else:
             res.append(current_recs[i])
             current_recs_dict[current_recs[i]["name"]] = i
+            res_i += 1
 
     results = rocchio(pref1, pref2)
     for r in results:
