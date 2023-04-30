@@ -278,12 +278,14 @@ function Home() {
                         publishers: user1Publishers,
                         phrases: user1Phrases,
                         podcasts: user1Podcasts,
+                        duration: [user1min, user1max]
                       }}
                       user2={{
                         genres: user2Genres,
                         publishers: user2Publishers,
                         phrases: user2Phrases,
                         podcasts: user2Podcasts,
+                        duration: [user2min, user2max],
                       }}
                       podcast={podcast}
                       recs={recs}
