@@ -23,9 +23,9 @@ function Home() {
   const [user1Podcasts, setUser1Podcasts] = useState([]);
   const [user2Podcasts, setUser2Podcasts] = useState([]);
   const [user1min, setUser1Min] = useState(0);
-  const [user1max, setUser1Max] = useState(0);
+  const [user1max, setUser1Max] = useState(60);
   const [user2min, setUser2Min] = useState(0);
-  const [user2max, setUser2Max] = useState(0);
+  const [user2max, setUser2Max] = useState(60);
 
   const [user1Phrases, setUser1Phrases] = useState([]);
   const [user2Phrases, setUser2Phrases] = useState([]);
