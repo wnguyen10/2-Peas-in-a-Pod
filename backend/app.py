@@ -45,12 +45,16 @@ def home():
 
 @app.route("/api/publishers/")
 def get_publishers():
+    mysql_engine.query_executor("USE podcasts")
+
     publishers = [p.simple_serialize() for p in Session.query(Publisher).all()]
     return success_response({"publishers": publishers})
 
 
 @app.route("/api/podcasts/")
 def get_podcasts():
+    mysql_engine.query_executor("USE podcasts")
+
     podcasts = [p.simple_serialize() for p in Session.query(Podcast).all()]
 
     res = {"podcasts": podcasts}
@@ -59,6 +63,8 @@ def get_podcasts():
 
 @app.route("/api/genres/")
 def get_genres():
+    mysql_engine.query_executor("USE podcasts")
+
     categories = [c.simple_serialize() for c in Session.query(Category).all()]
 
     res = {"categories": categories}
@@ -67,6 +73,8 @@ def get_genres():
 
 @app.route("/api/recommendations/", methods=["POST"])
 def recommend_podcasts():
+    mysql_engine.query_executor("USE podcasts")
+
     body = json.loads(request.data)
     pref1 = body.get("user1")
     pref2 = body.get("user2")
@@ -85,19 +93,18 @@ def recommend_podcasts():
 
 @app.route("/api/feedback/", methods=["POST"])
 def recommend_podcasts_feedback():
+    mysql_engine.query_executor("USE podcasts")
+
     body = json.loads(request.data)
     current_recs = body["recs"]
     pref1 = body["user1"]
     pref2 = body["user2"]
+    relevant = body["relevant"]
+    irrelevant = body["irrelevant"]
 
     current_recs_dict = {}
     res = []
     res_i = 0
-
-    if body["relevant"]:
-        add_to_relevant(body["podcast"])
-    else:
-        add_to_irrelevant(body["podcast"])
 
     for i in range(len(current_recs)):
         if current_recs[i]["name"] == body["podcast"] and not body["relevant"]:
@@ -107,19 +114,19 @@ def recommend_podcasts_feedback():
             current_recs_dict[current_recs[i]["name"]] = res_i
             res_i += 1
 
-    results = rocchio(pref1, pref2)
+    results = rocchio(pref1, pref2, relevant, irrelevant)
     for r in results:
         # Update podcast score if it exists in existing recommendations
         if r[0] in current_recs_dict:
             i = current_recs_dict[r[0]] 
-            res[i]["score"] = r[1]
+            res[i]["score"] = r[1] if r[1] <= 1 else 1
         elif len(res) < 10:
             # Add new podcast to recommendations if less than 10 results
             podcast = Session.query(Podcast).filter_by(name=r[0]).first().serialize()
             podcast["score"] = r[1]
             res.append(podcast)
     
-    return success_response(sorted(res, key=lambda p: p["score"], reverse=True))
+    return success_response(res)
 
 
 @app.teardown_request

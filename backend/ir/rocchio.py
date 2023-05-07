@@ -1,19 +1,7 @@
 import numpy as np
 from ir.recommendation import get_total_tfidf, show_name_to_index, docs_compressed_normed, get_top_k_filtered_recs_given_query
 
-relevant = []
-irrelevant = []
-
-
-def add_to_relevant(podcast):
-    relevant.append(podcast)
-
-
-def add_to_irrelevant(podcast):
-    irrelevant.append(podcast)
-
-
-def rocchio(user1_pref, user2_pref, relevant=relevant, irrelevant=irrelevant, input_doc_matrix=docs_compressed_normed,
+def rocchio(user1_pref, user2_pref, relevant, irrelevant, input_doc_matrix=docs_compressed_normed,
             show_name_to_index=show_name_to_index, a=1, b=0.7, c=0.2):
     """ 
     Params: {user1_pref: Dict,
@@ -55,10 +43,6 @@ def rocchio(user1_pref, user2_pref, relevant=relevant, irrelevant=irrelevant, in
     for i in range(len(new_query)):
         new_query[i] = a * original_query[i] + \
             relevant_vector[i] - irrelevant_vector[i]
-
-    for i in range(len(new_query)):
-        if new_query[i] < 0:
-            new_query[i] = 0
 
     new_recommendations = get_top_k_filtered_recs_given_query(new_query, user1_pref["duration"], user2_pref["duration"])
 
