@@ -44,6 +44,6 @@ def rocchio(user1_pref, user2_pref, relevant, irrelevant, input_doc_matrix=docs_
         new_query[i] = a * original_query[i] + \
             relevant_vector[i] - irrelevant_vector[i]
 
-    new_recommendations = get_top_k_filtered_recs_given_query(new_query, user1_pref["duration"], user2_pref["duration"])
+    new_recommendations = get_top_k_filtered_recs_given_query(new_query, user1_pref, user2_pref)
 
     return new_recommendations

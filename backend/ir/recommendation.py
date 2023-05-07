@@ -112,6 +112,9 @@ def get_specific_tfidf(pref_type, pref_list):
     Returns: a tf-idf vector representing the individual's specific preference for pref_type
     """
 
+    if not pref_list:
+        return np.zeros(docs_compressed_normed.shape[1])
+
     if pref_type == "GENRE":
         tf_idf_vec = get_genre_tfidf(pref_list)
 
@@ -167,24 +170,93 @@ def get_total_tfidf(genres, publishers, phrases, podcasts):
     return tf_idf_vec / categories_considered
 
 
-def get_top_k_filtered_recs_given_query(
-    query, indiv_one_duration, indiv_two_duration, k=10
-):
+def get_best_preference_match(indiv_one_pref, indiv_two_pref, rec_podcast_idx):
+    """
+    Params:
+    {
+        indiv_one_pref: preference dictionary for individual one, formatted as such:
+
+            indiv_one_pref =
+            {
+                "genres": [] (string list),
+                "publishers": [] (string list),
+                "phrases": [] (string list),
+                "podcasts": [] (string list),
+                "duration": [min_duration, max_duration] (int list)
+            },
+
+        indiv_two_pref: preference dictionary for individual two, formatted exactly as indiv_one_pref
+        rec_podcast_idx: row index of recommended podcast
+    }
+
+    Requires: For each string in genres, publishers, and podcasts, the preference must exist in the trunc_metadata.csv table
+
+    Returns: Dictionary (category_sim_dict) containing similarity score per category, formatted as such:
+
+        {
+            "genre": similarity score representing how similar combined genre preferences are to the recommended podcast
+            "publisher": similarity of combined publisher preferences to recommended podcast
+            "phrase": similarity of combined phrases to recommended podcast
+            "podcast": similarity of transcripts in combined podcast preferences to recommended podcast
+        }
+    """
+
+    avg_genre_tfidf = (
+        get_specific_tfidf("GENRE", indiv_one_pref["genres"])
+        + get_specific_tfidf("GENRE", indiv_two_pref["genres"])
+    ) / 2
+    avg_publisher_tfidf = (
+        get_specific_tfidf("PUBLISHER", indiv_one_pref["publishers"])
+        + get_specific_tfidf("PUBLISHER", indiv_two_pref["publishers"])
+    ) / 2
+    avg_phrase_tfidf = (
+        get_specific_tfidf("PHRASE", indiv_one_pref["phrases"])
+        + get_specific_tfidf("PHRASE", indiv_two_pref["phrases"])
+    ) / 2
+    avg_podcast_tfidf = (
+        get_specific_tfidf("PODCAST", indiv_one_pref["podcasts"])
+        + get_specific_tfidf("PODCAST", indiv_two_pref["podcasts"])
+    ) / 2
+
+    recommended_tfidf = docs_compressed_normed[rec_podcast_idx, :]
+
+    similarities = {
+        "genre": avg_genre_tfidf.dot(recommended_tfidf),
+        "publisher": avg_publisher_tfidf.dot(recommended_tfidf),
+        "phrase": avg_phrase_tfidf.dot(recommended_tfidf),
+        "podcast": avg_podcast_tfidf.dot(recommended_tfidf),
+    }
+
+    return similarities
+
+
+def get_top_k_filtered_recs_given_query(query, indiv_one_pref, indiv_two_pref, k=10):
     """
     Params:
     {
         query: TF-IDF vector representing a query (shape of (40, ))
-        indiv_one_duration: int list formatted as [min_duration, max_duration] for user duration preference
-        indiv_two_duration: same as above
+        indiv_one_pref: preference dictionary for individual one, formatted as such:
+
+            indiv_one_pref =
+            {
+                "genres": [] (string list),
+                "publishers": [] (string list),
+                "phrases": [] (string list),
+                "podcasts": [] (string list),
+                "duration": [min_duration, max_duration] (int list)
+            },
+
+        indiv_two_pref: preference dictionary for individual two, formatted exactly as indiv_one_pref
         k: number of recommendations returned (default = 10)
     }
 
-    Returns: a list of k sorted tuples in format (podcast name, cosine similarity). If durations have no overlap, returns [].
+    Returns: a list of k sorted tuples in format (podcast name, cosine similarity, category_sim_dict). For more info on the category_sim_dict, see
+    the get_best_preference_match function. If durations have no overlap, returns [].
     """
 
     # Find overlap of both user durations
-    min_duration = max(indiv_one_duration[0], indiv_two_duration[0])
-    max_duration = min(indiv_one_duration[1], indiv_two_duration[1])
+    min_duration = max(indiv_one_pref["duration"][0], indiv_two_pref["duration"][0])
+    max_duration = min(indiv_one_pref["duration"][1], indiv_two_pref["duration"][1])
 
     # If max_duration is 60, user is okay with any length greater than 60 as well
     if max_duration == 60:
@@ -208,7 +280,16 @@ def get_top_k_filtered_recs_given_query(
         similarity_score = similarities[sorted_idx[i]]
         if similarity_score != 0:
             podcast_idx = valid_idx[sorted_idx[i]]
-            top_matches.append((show_index_to_name[podcast_idx], similarity_score))
+            all_similarities = get_best_preference_match(
+                indiv_one_pref, indiv_two_pref, podcast_idx
+            )
+            top_matches.append(
+                (
+                    show_index_to_name[podcast_idx],
+                    similarities[sorted_idx[i]],
+                    all_similarities,
+                )
+            )
 
     return top_matches
 
@@ -234,7 +315,8 @@ def get_top_k_recommendations(indiv_one_pref, indiv_two_pref, k=10):
 
     Requires: For each string in the individual preference dictionaries in genres, publishers, and podcasts, the preference must exist in the trunc_metadata.csv table
 
-    Returns: a list of k sorted tuples in format (podcast name, cosine similarity). If durations have no overlap, returns [].
+    Returns: a list of k sorted tuples in format (podcast name, cosine similarity, category_sim_dict). For more info on the category_sim_dict, see
+    the get_best_preference_match function. If durations have no overlap, returns [].
     """
     indiv_one_tfidf = get_total_tfidf(
         indiv_one_pref["genres"],
@@ -253,5 +335,5 @@ def get_top_k_recommendations(indiv_one_pref, indiv_two_pref, k=10):
     avg_tfidf = (indiv_one_tfidf + indiv_two_tfidf) / 2
 
     return get_top_k_filtered_recs_given_query(
-        avg_tfidf, indiv_one_pref["duration"], indiv_two_pref["duration"], k
+        avg_tfidf, indiv_one_pref, indiv_two_pref, k
     )
