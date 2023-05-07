@@ -33,8 +33,6 @@ function Likedislike({
         recs: recs,
         user1: user1,
         user2: user2,
-        relevant: relevantPodcasts,
-        irrelevant: irrelevantPodcasts
       }),
       headers: {
         "Content-Type": "application/json",
@@ -78,8 +76,6 @@ function Likedislike({
         recs: recs,
         user1: user1,
         user2: user2,
-        relevant: relevantPodcasts,
-        irrelevant: irrelevantPodcasts
       }),
       headers: {
         "Content-Type": "application/json",
