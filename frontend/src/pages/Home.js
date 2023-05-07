@@ -77,6 +77,7 @@ function Home() {
           console.log(error.response.status);
           console.log(error.response.headers);
         }
+        getPodcasts();
       });
   }
 
@@ -96,6 +97,7 @@ function Home() {
           console.log(error.response.status);
           console.log(error.response.headers);
         }
+        getPublishers();
       });
   }
 
@@ -115,6 +117,7 @@ function Home() {
           console.log(error.response.status);
           console.log(error.response.headers);
         }
+        getGenres();
       });
   }
 
