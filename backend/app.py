@@ -86,6 +86,7 @@ def recommend_podcasts():
         podcast = Session.query(Podcast).filter_by(
             name=r[0]).first().serialize()
         podcast["score"] = r[1]
+        podcast["breakdowns"] = r[2]
         resp.append(podcast)
 
     return success_response({"recommendations": resp})
@@ -131,6 +132,7 @@ def recommend_podcasts_feedback():
             # Add new podcast to recommendations if less than 10 results
             podcast = Session.query(Podcast).filter_by(name=r[0]).first().serialize()
             podcast["score"] = r[1]
+            podcast["breakdowns"] = r[2]
             res.append(podcast)
 
     for r in res:

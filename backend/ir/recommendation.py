@@ -194,7 +194,7 @@ def get_best_preference_match(indiv_one_pref, indiv_two_pref, rec_podcast_idx):
     Returns: Dictionary (category_sim_dict) containing similarity score per category, formatted as such:
 
         {
-            "genre": similarity score representing how similar combined genre preferences are to the recommended podcast
+            "genre": similarity score (float between 0 and 1) representing how similar combined genre preferences are to the recommended podcast
             "publisher": similarity of combined publisher preferences to recommended podcast
             "phrase": similarity of combined phrases to recommended podcast
             "podcast": similarity of transcripts in combined podcast preferences to recommended podcast
