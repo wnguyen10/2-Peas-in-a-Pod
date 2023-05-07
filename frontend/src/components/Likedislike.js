@@ -14,9 +14,6 @@ function Likedislike({
   isIrrelevantActive,
   setIsIrrelevantActive,
 }) {
-  var relevantPodcasts = []
-  var irrelevantPodcasts = []
-
   const [isRelevantActive1, setIsRelevantActive1] = useState(false);
   const [isIrrelevantActive1, setIsIrrelevantActive1] = useState(false);
 
@@ -27,7 +24,6 @@ function Likedislike({
     isIrrelevantActive[num] = false;
     setIsRelevantActive(isRelevantActive);
     setIsIrrelevantActive(isIrrelevantActive);
-    relevantPodcasts.push(podcast["name"])
     axios({
       method: "POST",
       url: "http://4300showcase.infosci.cornell.edu:4546/api/feedback/",
@@ -73,7 +69,6 @@ function Likedislike({
       false,
     ];
     setIsRelevantActive(isRelevantActive);
-    irrelevantPodcasts.push(podcast["name"])
     axios({
       method: "POST",
       url: "http://4300showcase.infosci.cornell.edu:4546/api/feedback/",

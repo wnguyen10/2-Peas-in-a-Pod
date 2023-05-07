@@ -5,8 +5,8 @@ from flask_cors import CORS
 
 from config import Session, mysql_engine
 from db import Podcast, Publisher, Category
-from ir.recommendation import get_top_k_recommendations
-from ir.rocchio import rocchio, add_to_irrelevant, add_to_relevant
+from ir.recommendation import get_top_k_recommendations, get_similarity_score
+from ir.rocchio import rocchio, add_to_relevant, add_to_irrelevant, get_irrelevant
 from preprocess import add_data
 
 # ROOT_PATH for linking with all your files.
@@ -96,11 +96,18 @@ def recommend_podcasts_feedback():
     mysql_engine.query_executor("USE podcasts")
 
     body = json.loads(request.data)
+    
     current_recs = body["recs"]
     pref1 = body["user1"]
     pref2 = body["user2"]
-    relevant = body["relevant"]
-    irrelevant = body["irrelevant"]
+
+    if not body["podcast"]:
+        return success_response(body["recs"])
+
+    if body["relevant"]:
+        add_to_relevant(body["podcast"])
+    else:
+        add_to_irrelevant(body["podcast"])
 
     current_recs_dict = {}
     res = []
@@ -114,17 +121,23 @@ def recommend_podcasts_feedback():
             current_recs_dict[current_recs[i]["name"]] = res_i
             res_i += 1
 
-    results = rocchio(pref1, pref2, relevant, irrelevant)
+    results, new_query = rocchio(pref1, pref2)
+
+    for rec in res: 
+        rec["score"] = get_similarity_score(new_query, rec["name"])
+
     for r in results:
-        # Update podcast score if it exists in existing recommendations
-        if r[0] in current_recs_dict:
-            i = current_recs_dict[r[0]] 
-            res[i]["score"] = r[1] if r[1] <= 1 else 1
-        elif len(res) < 10:
+        if len(res) < 10 and r[0] not in current_recs_dict and r[0] not in get_irrelevant():
             # Add new podcast to recommendations if less than 10 results
             podcast = Session.query(Podcast).filter_by(name=r[0]).first().serialize()
             podcast["score"] = r[1]
             res.append(podcast)
+
+    for r in res:
+        if r["score"] >= 1:
+            r["score"] = 0.99
+        elif r["score"] < 0:
+            r["score"] = 0
     
     return success_response(res)
 

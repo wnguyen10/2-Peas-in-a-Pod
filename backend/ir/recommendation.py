@@ -337,3 +337,6 @@ def get_top_k_recommendations(indiv_one_pref, indiv_two_pref, k=10):
     return get_top_k_filtered_recs_given_query(
         avg_tfidf, indiv_one_pref, indiv_two_pref, k
     )
+
+def get_similarity_score(query, podcast):
+    return np.dot(docs_compressed_normed[show_name_to_index[podcast], :], query)
