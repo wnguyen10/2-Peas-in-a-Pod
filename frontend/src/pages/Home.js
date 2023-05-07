@@ -77,6 +77,7 @@ function Home() {
           console.log(error.response.status);
           console.log(error.response.headers);
         }
+        getPodcasts();
       });
   }
 
@@ -96,6 +97,7 @@ function Home() {
           console.log(error.response.status);
           console.log(error.response.headers);
         }
+        getPublishers();
       });
   }
 
@@ -115,6 +117,7 @@ function Home() {
           console.log(error.response.status);
           console.log(error.response.headers);
         }
+        getGenres();
       });
   }
 
@@ -278,7 +281,7 @@ function Home() {
                         publishers: user1Publishers,
                         phrases: user1Phrases,
                         podcasts: user1Podcasts,
-                        duration: [user1min, user1max]
+                        duration: [user1min, user1max],
                       }}
                       user2={{
                         genres: user2Genres,
