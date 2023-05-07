@@ -14,7 +14,7 @@ def add_to_irrelevant(podcast):
 
 
 def rocchio(user1_pref, user2_pref, relevant=relevant, irrelevant=irrelevant, input_doc_matrix=docs_compressed_normed,
-            show_name_to_index=show_name_to_index, a=1, b=0.8, c=0.2):
+            show_name_to_index=show_name_to_index, a=1, b=0.7, c=0.2):
     """ 
     Params: {user1_pref: Dict,
             user2_pref: Dict, 
